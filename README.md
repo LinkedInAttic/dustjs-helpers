@@ -1,4 +1,4 @@
-Dust  [![Build Status](https://secure.travis-ci.org/linkedin/dustjs.png)](http://travis-ci.org/linkedin/dustjs)
+Dust  [![Build Status](https://secure.travis-ci.org/linkedin/dustjs-helpers.png)](http://travis-ci.org/linkedin/dustjs-helpers)
 ====
 
 
