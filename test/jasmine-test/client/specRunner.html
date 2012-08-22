@@ -20,6 +20,12 @@
 
   <script type="text/javascript">
     (function() {
+      //Add the tapper helper to test the Tap helper.
+      dust.helpers.tapper = function(chunk, context, bodies, params) {
+        var result = dust.helpers.tap(params.value,chunk,context);
+        chunk.write(result);
+        return chunk;
+      };
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
 

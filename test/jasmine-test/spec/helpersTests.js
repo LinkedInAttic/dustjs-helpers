@@ -42,6 +42,83 @@ var helpersTests = [
     message: "should test the if helper using $idx"
   },
   {
+    name:     "math helper mod numbers",
+    source:   '<div>{@math key="16" method="mod" operand="4"/}</div>',  
+    context:  {},
+    expected: "<div>0</div>",
+    message: "testing math/mod helper with two numbers"
+  },
+  {
+    name:     "math helper mod using $idx",
+    source:   '{#list}<div>{@math key="{$idx}" method="mod" operand="5"/}</div>{/list}',
+    context:  { list: [ { y: 'foo' } ]},
+    expected: "<div>0</div>",
+    message: "should test the math/mod helper using $idx"
+  },
+  {
+    name:     "math helper subtract numbers",
+    source:   '<div>{@math key="16" method="subtract" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>12</div>",
+    message: "testing math/subtract helper with two numbers"
+  },
+  {
+    name:     "math helper subtract number and string",
+    source:   '<div>{@math key="16" method="subtract" operand="doh"/}</div>',
+    context:  {},
+    expected: "<div>NaN</div>",
+    message: "testing math/subtract helper with a number and a string"
+  },
+  {
+    name:     "math helper add numbers",
+    source:   '<div>{@math key="5" method="add" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>9</div>",
+    message: "testing math/add helper with two numbers"
+  },
+  {
+    name:     "math helper multiply numbers",
+    source:   '<div>{@math key="5" method="multiply" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>20</div>",
+    message: "testing math/multiply helper with two numbers"
+  },
+  {
+    name:     "math helper divide using variable",
+    source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+    context:  { y : 4 },
+    expected: "<div>4</div>",
+    message: "testing math/divide helper with variable as operand"
+  },
+  {
+    name:     "math helper floor numbers",
+    source:   '<div>{@math key="16.5" method="floor"/}</div>',
+    context:  {},
+    expected: "<div>16</div>",
+    message: "testing math/floor helper with two numbers"
+  },
+  {
+    name:     "math helper ceil numbers",
+    source:   '<div>{@math key="16.5" method="ceil"/}</div>',
+    context:  {},
+    expected: "<div>17</div>",
+    message: "testing math/ceil helper with two numbers"
+  },
+  {
+    name:     "math helper abs numbers",
+    source:   '<div>{@math key="-16" method="abs"/}</div>',
+    context:  {},
+    expected: "<div>16</div>",
+    message: "testing math/abs helper with two numbers"
+  },
+  { 
+    name:     "math helper eq  numbers",
+    source:   '<div>{@math key="15" eq="16"/}</div>',
+    context:  {},
+    expected: "<div>false</div>",
+    message: "testing math/eq helper with two numbers"
+  },
+  {
     name:     "select helper with a constant string and condition eq",
     source:   ["{@select key=\"foo\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -398,6 +475,62 @@ var helpersTests = [
     context:  { "a" : {"foo" : function() { return "bar"; } } },
     expected: "bar bar",
     message: "should test if tap Helper is working properly when it makes reference to a function within an object-valued {context variable}"
+  },
+  {
+     name:     "array: reference $idx in iteration on objects",
+     source:   "{#names}({$idx}).{title} {name}{~n}{/names}",
+     context:  { title: "Sir", names: [ { name: "Moe" }, { name: "Larry" }, { name: "Curly" } ] },
+     expected: "(0).Sir Moe\n(1).Sir Larry\n(2).Sir Curly\n",
+     message: "array: reference $idx in iteration on objects"
+  },
+  {
+      name:     "array: reference $len in iteration on objects",
+      source:   "{#names}Size=({$len}).{title} {name}{~n}{/names}",
+      context:  { title: "Sir", names: [ { name: "Moe" }, { name: "Larry" }, { name: "Curly" } ] },
+      expected: "Size=(3).Sir Moe\nSize=(3).Sir Larry\nSize=(3).Sir Curly\n",
+      message: "test array: reference $len in iteration on objects"
+  },
+  {
+     name:     "array reference $idx in iteration on simple type",
+     source:   "{#names}({$idx}).{title} {.}{~n}{/names}",
+     context:  { title: "Sir", names: [ "Moe", "Larry", "Curly" ] },
+     expected: "(0).Sir Moe\n(1).Sir Larry\n(2).Sir Curly\n",
+     message: "test array reference $idx in iteration on simple types"
+  },
+  {
+      name:     "array reference $len in iteration on simple type",
+      source:   "{#names}Size=({$len}).{title} {.}{~n}{/names}",
+      context:  { title: "Sir", names: [ "Moe", "Larry", "Curly" ] },
+      expected: "Size=(3).Sir Moe\nSize=(3).Sir Larry\nSize=(3).Sir Curly\n",
+      message: "test array reference $len in iteration on simple types"
+  },
+  {
+      name:     "array reference $idx/$len on empty array case",
+      source:   "{#names}Idx={$idx} Size=({$len}).{title} {.}{~n}{/names}",
+      context:  { title: "Sir", names: [ ] },
+      expected: "",
+      message: "test array reference $idx/$len on empty array case"
+  },
+  {
+      name:     "array reference $idx/$len on single element case",
+      source:   "{#names}Idx={$idx} Size={$len} {.}{/names}",
+      context:  { names: "Just one name" },
+      expected: "Idx=0 Size=1 Just one name",
+      message: "test array reference $idx/$len on single element case"
+  },
+  {
+      name:     "array reference $idx/$len {#.} section case",
+      source:   "{#names}{#.}{$idx}{.} {/.}{/names}",
+      context:  { names:  ["Moe", "Larry", "Curly"] },
+      expected: "0Moe 1Larry 2Curly ",
+      message: "test array reference $idx/$len {#.} section case"
+  },
+  {
+      name:     "array reference $idx/$len nested loops",
+      source:   "{#A}A loop:{$idx}-{$len},{#B}B loop:{$idx}-{$len}C[0]={.C[0]} {/B}A loop trailing: {$idx}-{$len}{/A}",
+      context:  {"A": [ {"B": [ {"C": ["Ca1", "C2"]}, {"C": ["Ca2", "Ca22"]} ] }, {"B": [ {"C": ["Cb1", "C2"]}, {"C": ["Cb2", "Ca2"]} ] } ] },
+      expected: "A loop:0-2,B loop:0-2C[0]=Ca1 B loop:1-2C[0]=Ca2 A loop trailing: 0-2A loop:1-2,B loop:0-2C[0]=Cb1 B loop:1-2C[0]=Cb2 A loop trailing: 1-2",
+      message: "test array reference $idx/$len nested loops"
   }
 ];
 
