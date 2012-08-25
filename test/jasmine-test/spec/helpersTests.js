@@ -531,6 +531,34 @@ var helpersTests = [
       context:  {"A": [ {"B": [ {"C": ["Ca1", "C2"]}, {"C": ["Ca2", "Ca22"]} ] }, {"B": [ {"C": ["Cb1", "C2"]}, {"C": ["Cb2", "Ca2"]} ] } ] },
       expected: "A loop:0-2,B loop:0-2C[0]=Ca1 B loop:1-2C[0]=Ca2 A loop trailing: 0-2A loop:1-2,B loop:0-2C[0]=Cb1 B loop:1-2C[0]=Cb2 A loop trailing: 1-2",
       message: "test array reference $idx/$len nested loops"
+  },
+  {
+      name:     "contextDump simple test",
+      source:   "{@contextDump/}",
+      context:  {A:2, B:3},
+      expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
+      message: "contextDump simple test"
+  },
+  {
+      name:     "contextDump simple test dump to console",
+      source:   "{@contextDump to=\"console\"/}",
+      context:  {A:2, B:3},
+      expected: "",
+      message: "contextDump simple test"
+  },
+  {
+      name:     "contextDump full test",
+      source:   "{@contextDump key=\"full\"/}",
+      context:  {aa:{A:2, B:3}},
+      expected: "{\n  \"isObject\": true,\n  \"head\": {\n    \"aa\": {\n      \"A\": 2,\n      \"B\": 3\n    }\n  }\n}",
+      message: "contextDump full test"
+  },
+  {
+      name:     "contextDump function dump test",
+      source:   "{#aa param=\"{p}\"}{@contextDump key=\"full\"/}{/aa}",
+      context:  {aa:["a"],p:42},
+      expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk,ctx){return chk.reference(ctx.get(\\\"p\\\"),ctx,\\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
+      message: "contextDump function dump test"
   }
 ];
 
