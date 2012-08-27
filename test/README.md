@@ -14,9 +14,11 @@ If you want to run the client version just open the html page called specRunner.
 
 Pre-requisites for tests on node server version: 
 ----------------------------------
-* install nodejs 0.6 or greater 
+* install nodejs 0.6 or greater
 * install npm
-* install jasmine test framework : npm install -g jasmine-node
+* install testing dependencies by running in the package directory:
+
+     npm install
 
 In order to run the node.js version of dust, run this command in the terminal
 
