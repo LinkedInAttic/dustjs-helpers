@@ -219,6 +219,16 @@ var helpersTests = [
     expected: "foobar",
     message: "should test select helper with variable and one condition gte"
   },
+  {
+    name:     "select helper with a zero variable and one condition gte",
+    source:   ["{@select key=foo}",
+                 "{@gte value=0}foobar{/gte}",
+               "{/select}"
+              ].join("\n"),
+    context:  { foo: 0 },
+    expected: "foobar",
+    message: "should test select helper with variable and one condition gte"
+  },
   
   {
     name:     "select helper with variable of type string and eq condition",
