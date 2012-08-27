@@ -219,6 +219,16 @@ var helpersTests = [
     expected: "foobar",
     message: "should test select helper with variable and one condition gte"
   },
+  {
+    name:     "select helper with a zero variable and one condition gte",
+    source:   ["{@select key=foo}",
+                 "{@gte value=0}foobar{/gte}",
+               "{/select}"
+              ].join("\n"),
+    context:  { foo: 0 },
+    expected: "foobar",
+    message: "should test select helper with variable and one condition gte"
+  },
   
   {
     name:     "select helper with variable of type string and eq condition",
@@ -333,6 +343,27 @@ var helpersTests = [
     context:  { "skills" : [ "java", "js" , "unknown"] },
     expected: "JAVA,JS,UNKNOWN",
     message: "should test select helper inside a array with {.}"
+  },
+  {
+    name:     "standalone eq without a select with a zero variable",
+    source:   "{@eq key=foo value=0}foobar{/eq}",
+    context:  { foo: 0 },
+    expected: "foobar",
+    message: "should test select helper with variable and one condition gte"
+  },
+  {
+    name:     "standalone gte without a select with a zero variable",
+    source:   "{@gte key=foo value=0}foobar{/gte}",
+    context:  { foo: 0 },
+    expected: "foobar",
+    message: "should test select helper with variable and one condition gte"
+  },
+  {
+    name:     "standalone gt without a select with a variable",
+    source:   "{@gt key=foo value=5}foobar{/gt}",
+    context:  { foo: 10 },
+    expected: "foobar",
+    message: "should test select helper with variable and one condition gte"
   },
   {
   	name:     "partial within a array",
