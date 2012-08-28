@@ -18,7 +18,7 @@ Pre-requisites for tests on node server version:
 * install npm
 * install testing dependencies by running in the package directory:
 
-     npm install
+         npm install
 
 In order to run the node.js version of dust, run this command in the terminal
 
