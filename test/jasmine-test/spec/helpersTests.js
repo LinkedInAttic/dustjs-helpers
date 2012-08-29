@@ -111,13 +111,6 @@ var helpersTests = [
     expected: "<div>16</div>",
     message: "testing math/abs helper with two numbers"
   },
-  { 
-    name:     "math helper eq  numbers",
-    source:   '<div>{@math key="15" eq="16"/}</div>',
-    context:  {},
-    expected: "<div>false</div>",
-    message: "testing math/eq helper with two numbers"
-  },
   {
     name:     "select helper with a constant string and condition eq",
     source:   ["{@select key=\"foo\"}",
