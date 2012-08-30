@@ -561,7 +561,71 @@ var helpersTests = [
       context:  {aa:["a"],p:42},
       expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk,ctx){return chk.reference(ctx.get(\\\"p\\\"),ctx,\\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
       message: "contextDump function dump test"
+  },
+  {
+      name:     "access helper find in current context test",
+      source:   "{#A}{#B}{@access key=\"C.name\" /}{/B}{/A}",
+      context:  {A: {B: {C:{name: "a-b-c"}}}},
+      expected: "a-b-c",
+      message: "access helper find in current context test"
+  },
+  {
+      name:     "access helper find in parent level test",
+      source:   "{#A}{#B}{#C}{@access key=\"A.B.name\" /}{/C}{/B}{/A}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"}}},
+      expected: "a-b",
+      message: "access helper find in parent level test"
+  },
+  {
+      name:     "access helper find in parent level test",
+      source:   "{#A.B.C}{@access key=\"A.name\" /}{/A.B.C}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"},A:{name:"a-a"},name:"a"}},
+      expected: "a",
+      message: "access helper find in parent level test"
+  },
+  {
+      name:     "access helper with subscript find up test",
+      source:   "{#A}{#B}{@access key=\"D[0].A.name\" /}{/B}{/A}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"},A:{name:"a-a"},name:"a"},D:[{A:{name: "D[0].A"}},{B:{name:"D[1].B"}}]},
+      expected: "D[0].A",
+      message: "access helper with subscript find up test"
+  },
+  {
+      name:     "access helper with non-path key test",
+      source:   "{#A.B.C}{@access key=\"name\" /}{/A.B.C}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"},A:{name:"a-a"},name:"a"},D:[{A:{name: "D[0].A"}},{B:{name:"D[1].B"}}]},
+      expected: "a-b-c",
+      message: "access helper with non-path key test"
+  },
+  {
+      name:     "access helper with simple . key test",
+      source:   "{#loop2}{@access key=\".\"/}{/loop2}",
+      context:  {loop2: ["ab", "de"]},
+      expected: "abde",
+      message: "access helper with simple . key test"
+  },
+  {
+      name:     "access helper with  .name key test",
+      source:   "{#loop}{@access key=\".name\"/}{/loop}",
+      context:  {loop: [{name:"ab"}, {name:"de"}]},
+      expected: "abde",
+      message: "access helper with .name key test"
+  },
+  {
+      name:     "access helper with context used test",
+      source:   "{#D:A.B}{@access key=\"C.name\" /}{/D}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"},A:{name:"a-a"},name:"a"},D:[{A:{name: "D[0].A"}},{B:{name:"D[1].B"}}]},
+      expected: "a-b-ca-b-c",
+      message: "access helper with context used test"
+  },
+  {
+      name:     "access helper with context, test can't reach out of context ",
+      source:   "{#D:A.B}{@access key=\"A.A.name\" /}{/D}",
+      context:  {A: {B: {C:{name: "a-b-c"},name: "a-b"},A:{name:"a-a"},name:"a"},D:[{A:{name: "D[0].A"}},{B:{name:"D[1].B"}}]},
+      expected: "",
+      message: "access helper with context, test can't reach out of context"
   }
+
 ];
 
 if (typeof module !== "undefined" && typeof require !== "undefined") {
