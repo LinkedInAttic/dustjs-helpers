@@ -49,6 +49,13 @@ var helpersTests = [
     message: "should test the if helper using $idx"
   },
   {
+    name:     "math helper does not dupport body",
+    source:   '<div>{@math key="16" method="mod" operand="4"}{body}{/math}</div>',  
+    context:  {"body" :" body block"},
+    expected: "<div>0</div>",
+    message: "testing math/mod helper with two numbers and body, but no body is output"
+  },
+  {
     name:     "math helper mod numbers",
     source:   '<div>{@math key="16" method="mod" operand="4"/}</div>',  
     context:  {},
@@ -119,6 +126,83 @@ var helpersTests = [
     message: "testing math/abs helper with two numbers"
   },
   {
+    name:     "select helper with no body",
+    source:   "{@select key=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "select helper with no body silently fails with console log"
+  },
+  {
+    name:     "eq helper with no body",
+    source:   "{@eq key=\"foo\" value=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "eq helper with no body silently fails with console log"
+  },
+  {
+    name:     "eq helper matching string case",
+    source:   "{@eq key=\"foo\" value=\"foo\"}equal{/eq}",
+    context:  {},
+    expected: "equal",
+    message: "eq helper matching string case"
+  },
+  {
+    name:     "eq helper non matching string case",
+    source:   "{@eq key=\"foo\" value=\"bar\"}equal{:else}bar{/eq}",
+    context:  {},
+    expected: "bar",
+    message: "eq helper non matching string case"
+  },
+  {
+     name:     "eq helper non matching string case missing else block",
+     source:   "{@eq key=\"foo\" value=\"bar\"}equal{/eq}",
+     context:  {},
+     expected: "",
+     message: "eq helper non matching string case missing else block"
+   },
+  {
+    name:     "lt helper with no body",
+    source:   "{@lt key=\"2\" value=\"3\" type=\"number\"/}",
+    context:  {},
+    expected: "",
+    message: "lt helper with no body silently fails with console log"
+  },
+  {
+    name:     "lt helper with type number",
+    source:   "{@lt key=\"2\" value=\"3\" type=\"number\"}2 less than 3{/lt}",
+    context:  {},
+    expected: "2 less than 3",
+    message: "lt helper with type number"
+  },
+  {
+     name:     "gt helper with type string not valid case",
+     source:   "{@gt key=\"22\" value=\"3\" type=\"string\"}22 greater than 3 with type string {:else}22 not greater than 3 with type string{/gt}",
+     context:  {},
+     expected: "22 not greater than 3 with type string",
+     message: "gt helper with type string not valid case"
+   },
+  {
+     name:     "lte helper with no body",
+     source:   "{@lte key=\"2\" value=\"3\" type=\"number\"/}",
+     context:  {},
+     expected: "",
+     message: "lte helper with no body silently fails with console log"
+   },
+   {
+      name:     "gt helper with no body",
+      source:   "{@gt key=\"5\" value=\"3\" type=\"number\"/}",
+      context:  {},
+      expected: "",
+      message: "gt helper with no body silently fails with console log"
+    }, 
+    {
+       name:     "gte helper with no body",
+       source:   "{@gte key=\"5\" value=\"3\" type=\"number\"/}",
+       context:  {},
+       expected: "",
+       message: "gte helper with no body silently fails with console log"
+    }, 
+    { 
     name:     "select helper with a constant string and condition eq",
     source:   ["{@select key=\"foo\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -127,8 +211,8 @@ var helpersTests = [
     context:  {},
     expected: "foo",
     message: "should test select helper with a constant string and condition eq"
-  },
-  {
+   },
+   {
     name:     "select helper with a variable string and condition eq",
     source:   ["{@select key=\"{foo}\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -311,7 +395,7 @@ var helpersTests = [
     message: "should test select helper with missing key in the context and hence no output"
   },
   {
-    name:     "select helper wih key matching the else condition",
+    name:     "select helper wih key matching the default condition",
     source:   ["{#b}{@select key=\"{x}\"}",
                " {@eq value=\"{y}\"}<div>BAR</div>{/eq}",
                " {@eq value=\"{z}\"}<div>BAZ</div>{/eq}",
@@ -319,7 +403,7 @@ var helpersTests = [
                "{/select}{/b}"].join("\n"),
     context:  { b : { "x": "foo", "y": "bar", "z": "baz" } },
     expected: "foofoo",
-    message: "should test select helper with key matching the else condition"
+    message: "should test select helper with key matching the default condition"
   },
   {
     name:     "select helper inside a array with .",
@@ -548,6 +632,13 @@ var helpersTests = [
       expected: "A loop:0-2,B loop:0-2C[0]=Ca1 B loop:1-2C[0]=Ca2 A loop trailing: 0-2A loop:1-2,B loop:0-2C[0]=Cb1 B loop:1-2C[0]=Cb2 A loop trailing: 1-2",
       message: "test array reference $idx/$len nested loops"
   },
+  {
+       name:     "contextDump simple test does not support body",
+       source:   "{@contextDump}{body}{/contextDump}",
+       context:  {A:2, B:3},
+       expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
+       message: "contextDump simple test does not support body"
+   },
   {
       name:     "contextDump simple test",
       source:   "{@contextDump/}",
