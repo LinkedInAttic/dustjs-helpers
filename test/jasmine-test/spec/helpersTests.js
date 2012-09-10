@@ -8,56 +8,49 @@ var helpersTests = [
   },
   {
     name:     "if helper with no body",
-    source:   '{@if cond="{x}<{y}"/}',  
+    source:   '{@if cond="{x}<{y}"/}',
     context:  { x: 2, y: 3 },
     expected: "",
     message: "should test if helper with no body and fail gracefully"
   },
-	{
+  {
     name:     "if helper without else",
-    source:   '{@if cond="{x}<{y}"}<div> X < Y </div>{/if}',  
+    source:   '{@if cond="{x}<{y}"}<div> X < Y </div>{/if}',
     context:  { x: 2, y: 3 },
     expected: "<div> X < Y </div>",
     message: "should test if helper without else"
   },
   {
     name:     "if helper with else block",
-    source:   '{@if cond=" \'{x}\'.length && \'{y}\'.length "}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/if}',  
+    source:   '{@if cond=" \'{x}\'.length && \'{y}\'.length "}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/if}',
     context:  {},
     expected: "<div> X and Y does not exists </div>",
     message: "should test if helper with else block"
   },
   {
     name:     "if helper with else using the or condition",
-    source:   '{@if cond=" \'{x}\'.length || \'{y}\'.length "}<div> X or Y exists </div>{:else}<div> X or Y does not exists </div>{/if}',  
+    source:   '{@if cond=" \'{x}\'.length || \'{y}\'.length "}<div> X or Y exists </div>{:else}<div> X or Y does not exists </div>{/if}',
     context:  { x: 1},
     expected: "<div> X or Y exists </div>",
     message: "should test if helper with else using the or condition"
   },
   {
     name:     "if helper with else using the and conditon",
-    source:   '{@if cond="( \'{x}\'.length ) && ({x}<3)"}<div> X exists and is 1 </div>{:else}<div> x is not there </div>{/if}',  
+    source:   '{@if cond="( \'{x}\'.length ) && ({x}<3)"}<div> X exists and is 1 </div>{:else}<div> x is not there </div>{/if}',
     context:  { x : 1},
     expected: "<div> X exists and is 1 </div>",
     message: "should test if helper with else usingt he and conditon"
   },
   {
     name:     "if helper using $idx",
-    source:   '{#list}{@if cond="( {$idx} == 1 )"}<div>{y}</div>{/if}{/list}',  
+    source:   '{#list}{@if cond="( {$idx} == 1 )"}<div>{y}</div>{/if}{/list}',
     context:  { x : 1, list: [ { y: 'foo' }, { y: 'bar'} ]},
     expected: "<div>bar</div>",
     message: "should test the if helper using $idx"
   },
   {
-    name:     "math helper does not dupport body",
-    source:   '<div>{@math key="16" method="mod" operand="4"}{body}{/math}</div>',  
-    context:  {"body" :" body block"},
-    expected: "<div>0</div>",
-    message: "testing math/mod helper with two numbers and body, but no body is output"
-  },
-  {
     name:     "math helper mod numbers",
-    source:   '<div>{@math key="16" method="mod" operand="4"/}</div>',  
+    source:   '<div>{@math key="16" method="mod" operand="4"/}</div>',
     context:  {},
     expected: "<div>0</div>",
     message: "testing math/mod helper with two numbers"
@@ -75,6 +68,13 @@ var helpersTests = [
     context:  {},
     expected: "<div>12</div>",
     message: "testing math/subtract helper with two numbers"
+  },
+  {
+    name:     "math helper zero operand",
+    source:   '<div>{@math key="16" method="subtract" operand="0"/}</div>',
+    context:  {},
+    expected: "<div>16</div>",
+    message: "testing math helper with zero as the operand"
   },
   {
     name:     "math helper subtract number and string",
@@ -124,6 +124,48 @@ var helpersTests = [
     context:  {},
     expected: "<div>16</div>",
     message: "testing math/abs helper with two numbers"
+  },
+  {
+    name:     "math helper eq filter",
+    source:   '<div>{@math key="-13" method="abs"}{@eq value=13}Test is true{/eq}{/math}</div>',
+    context:  {},
+    expected: "<div>Test is true</div>",
+    message: "testing math with body helper with abs and eq"
+  },
+  {
+    name:     "math helper with body gt test else",
+    source:   '<div>{@math key="13" method="add" operand="12"}{@gt value=123}13 + 12 > 123{:else}Math is fun{/gt}{/math}</div>',
+    context:  {},
+    expected: "<div>Math is fun</div>",
+    message: "testing math with body else helper with add and gt"
+  },
+  {
+    name:     "math helper with body gt default",
+    source:   '<div>{@math key="13" method="add" operand="12"}{@gt value=123}13 + 12 > 123{/gt}{@default}Math is fun{/default}{/math}</div>',
+    context:  {},
+    expected: "<div>Math is fun</div>",
+    message: "testing math with body else helper with add and gt and default"
+  },
+  {
+    name:     "math helper with body acts like the select helper",
+    source:   '<div>{@math key="1" method="add" operand="1"}math with body is truthy{:else}else is meaningless{/math}</div>',
+    context:  {},
+    expected: "<div>math with body is truthy</div>",
+    message: "testing math with body ignores the else"
+  },
+  {
+    name:     "math helper with body acts like the select helper",
+    source:   '<div>{@math key="1" method="subtract" operand="1"}math with body is truthy even if mathout is falsy{:else}else is meaningless{/math}</div>',
+    context:  {},
+    expected: "<div>math with body is truthy even if mathout is falsy</div>",
+    message: "testing math with body ignores the else"
+  },
+  {
+    name:     "math helper empty body",
+    source:   '<div>{@math key="1" method="add" operand="2"}{/math}</div>',
+    context:  {},
+    expected: "<div></div>",
+    message: "testing math with an empty body will show what is inside empty"
   },
   {
     name:     "select helper with no body",
@@ -194,15 +236,15 @@ var helpersTests = [
       context:  {},
       expected: "",
       message: "gt helper with no body silently fails with console log"
-    }, 
+    },
     {
        name:     "gte helper with no body",
        source:   "{@gte key=\"5\" value=\"3\" type=\"number\"/}",
        context:  {},
        expected: "",
        message: "gte helper with no body silently fails with console log"
-    }, 
-    { 
+    },
+    {
     name:     "select helper with a constant string and condition eq",
     source:   ["{@select key=\"foo\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -242,7 +284,7 @@ var helpersTests = [
     expected: "foobar",
     message: "should test select helper with string variable compared to a number and one condition eq"
   },
-  
+
   {
     name:     "select helper with variable and one condition lt",
     source:   ["{@select key=foo}",
@@ -363,7 +405,7 @@ var helpersTests = [
     source:   ['{@select key=test}',
                 '{@eq value="{y}"}<div>FOO</div>{/eq}',
                 '{@eq value="{x}"}<div>BAR</div>{/eq}',
-              '{/select}'].join("\n"),  
+              '{/select}'].join("\n"),
     context:  { "test":"foo", "y": "foo", "x": "bar" },
     expected: "<div>FOO</div>",
     message: "should test select helper with variable and type string with 2 conditions"
@@ -382,7 +424,7 @@ var helpersTests = [
     expected: "foobar",
     message: "should test select helper with variable and type string in a nested objects"
   },
-  
+
   {
     name:     "select helper with missing key in the context and hence no output",
     source:   ["{#b}{@select key=y}",
@@ -428,7 +470,14 @@ var helpersTests = [
     message: "should test select helper inside a array with {.}"
   },
   {
-  	name:     "partial within a array",
+    name:     "eq helper without a body",
+    source:   "{@eq key=\"abc\" value=\"java\"/}",
+    context:  {},
+    expected: "",
+    message: "eq helper without a body should fail gracefully and return nothing"
+  },
+  {
+    name:     "partial within a array",
     source:   '{#n}{>replace name=. count="30"/}{@sep} {/sep}{/n}',
     context:  { n: ["Mick", "Tom", "Bob"] },
     expected: "Hello Mick! You have 30 new messages. Hello Tom! You have 30 new messages. Hello Bob! You have 30 new messages.",
