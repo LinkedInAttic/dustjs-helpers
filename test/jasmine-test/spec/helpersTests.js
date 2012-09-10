@@ -6,6 +6,13 @@ var helpersTests = [
     expected: "Hello Mick! You have 30 new messages.",
     message: "should test a basic replace"
   },
+  {
+    name:     "if helper with no body",
+    source:   '{@if cond="{x}<{y}"/}',  
+    context:  { x: 2, y: 3 },
+    expected: "",
+    message: "should test if helper with no body and fail gracefully"
+  },
 	{
     name:     "if helper without else",
     source:   '{@if cond="{x}<{y}"}<div> X < Y </div>{/if}',  
@@ -359,6 +366,13 @@ var helpersTests = [
     expected: "3, 2, 1",
     message: "should test async iterator"
   },
+  {
+     name:     "sizeHelper does not support body",
+     source:   'you have {@size key=list}{body}{/size} new messages',
+     context:  { list: [ 'msg1', 'msg2', 'msg3' ], "body" : "body block" },
+     expected: "you have 3 new messages",
+     message: "should test size helper not supporting body"
+   },
   {
     name:     "sizeHelper 3 items",
     source:   'you have {@size key=list/} new messages',
