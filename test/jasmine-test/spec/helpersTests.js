@@ -140,18 +140,18 @@ var helpersTests = [
     message: "testing math with body else helper with add and gt and default"
   },
   {
-    name:     "math helper with body and no filtering on the body",
-    source:   '<div>{@math key="1" method="add" operand="1"}1 + 1 is truthy{:else}1 + 1 is falsy{/math}</div>',
+    name:     "math helper with body acts like the select helper",
+    source:   '<div>{@math key="1" method="add" operand="1"}math with body is truthy{:else}else is meaningless{/math}</div>',
     context:  {},
-    expected: "<div>1 + 1 is truthy</div>",
-    message: "testing math with body with evaluate truthiness of the results"
+    expected: "<div>math with body is truthy</div>",
+    message: "testing math with body ignores the else"
   },
   {
-    name:     "math helper with body and else and no testMethod or testValue",
-    source:   '<div>{@math key="1" method="subtract" operand="1"}1 - 1 is truthy{:else}1 - 1 is falsy{/math}</div>',
+    name:     "math helper with body acts like the select helper",
+    source:   '<div>{@math key="1" method="subtract" operand="1"}math with body is truthy even if mathout is falsy{:else}else is meaningless{/math}</div>',
     context:  {},
-    expected: "<div>1 - 1 is falsy</div>",
-    message: "testing math with body and else with evaluate truthiness of the results"
+    expected: "<div>math with body is truthy even if mathout is falsy</div>",
+    message: "testing math with body ignores the else"
   },
   {
     name:     "math helper empty body",
