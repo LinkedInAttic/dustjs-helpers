@@ -7,6 +7,13 @@ var helpersTests = [
     message: "should test a basic replace"
   },
   {
+    name:     "if helper with no body",
+    source:   '{@if cond="{x}<{y}"/}',
+    context:  { x: 2, y: 3 },
+    expected: "",
+    message: "should test if helper with no body and fail gracefully"
+  },
+  {
     name:     "if helper without else",
     source:   '{@if cond="{x}<{y}"}<div> X < Y </div>{/if}',
     context:  { x: 2, y: 3 },
@@ -161,6 +168,83 @@ var helpersTests = [
     message: "testing math with an empty body will show what is inside empty"
   },
   {
+    name:     "select helper with no body",
+    source:   "{@select key=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "select helper with no body silently fails with console log"
+  },
+  {
+    name:     "eq helper with no body",
+    source:   "{@eq key=\"foo\" value=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "eq helper with no body silently fails with console log"
+  },
+  {
+    name:     "eq helper matching string case",
+    source:   "{@eq key=\"foo\" value=\"foo\"}equal{/eq}",
+    context:  {},
+    expected: "equal",
+    message: "eq helper matching string case"
+  },
+  {
+    name:     "eq helper non matching string case",
+    source:   "{@eq key=\"foo\" value=\"bar\"}equal{:else}bar{/eq}",
+    context:  {},
+    expected: "bar",
+    message: "eq helper non matching string case"
+  },
+  {
+     name:     "eq helper non matching string case missing else block",
+     source:   "{@eq key=\"foo\" value=\"bar\"}equal{/eq}",
+     context:  {},
+     expected: "",
+     message: "eq helper non matching string case missing else block"
+   },
+  {
+    name:     "lt helper with no body",
+    source:   "{@lt key=\"2\" value=\"3\" type=\"number\"/}",
+    context:  {},
+    expected: "",
+    message: "lt helper with no body silently fails with console log"
+  },
+  {
+    name:     "lt helper with type number",
+    source:   "{@lt key=\"2\" value=\"3\" type=\"number\"}2 less than 3{/lt}",
+    context:  {},
+    expected: "2 less than 3",
+    message: "lt helper with type number"
+  },
+  {
+     name:     "gt helper with type string not valid case",
+     source:   "{@gt key=\"22\" value=\"3\" type=\"string\"}22 greater than 3 with type string {:else}22 not greater than 3 with type string{/gt}",
+     context:  {},
+     expected: "22 not greater than 3 with type string",
+     message: "gt helper with type string not valid case"
+   },
+  {
+     name:     "lte helper with no body",
+     source:   "{@lte key=\"2\" value=\"3\" type=\"number\"/}",
+     context:  {},
+     expected: "",
+     message: "lte helper with no body silently fails with console log"
+   },
+   {
+      name:     "gt helper with no body",
+      source:   "{@gt key=\"5\" value=\"3\" type=\"number\"/}",
+      context:  {},
+      expected: "",
+      message: "gt helper with no body silently fails with console log"
+    },
+    {
+       name:     "gte helper with no body",
+       source:   "{@gte key=\"5\" value=\"3\" type=\"number\"/}",
+       context:  {},
+       expected: "",
+       message: "gte helper with no body silently fails with console log"
+    },
+    {
     name:     "select helper with a constant string and condition eq",
     source:   ["{@select key=\"foo\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -169,8 +253,8 @@ var helpersTests = [
     context:  {},
     expected: "foo",
     message: "should test select helper with a constant string and condition eq"
-  },
-  {
+   },
+   {
     name:     "select helper with a variable string and condition eq",
     source:   ["{@select key=\"{foo}\"}",
                  "{@eq value=\"foo\"}foo{/eq}",
@@ -353,7 +437,7 @@ var helpersTests = [
     message: "should test select helper with missing key in the context and hence no output"
   },
   {
-    name:     "select helper wih key matching the else condition",
+    name:     "select helper wih key matching the default condition",
     source:   ["{#b}{@select key=\"{x}\"}",
                " {@eq value=\"{y}\"}<div>BAR</div>{/eq}",
                " {@eq value=\"{z}\"}<div>BAZ</div>{/eq}",
@@ -361,7 +445,7 @@ var helpersTests = [
                "{/select}{/b}"].join("\n"),
     context:  { b : { "x": "foo", "y": "bar", "z": "baz" } },
     expected: "foofoo",
-    message: "should test select helper with key matching the else condition"
+    message: "should test select helper with key matching the default condition"
   },
   {
     name:     "select helper inside a array with .",
@@ -416,57 +500,64 @@ var helpersTests = [
     message: "should test async iterator"
   },
   {
+     name:     "sizeHelper does not support body",
+     source:   'you have {@size key=list}{body}{/size} new messages',
+     context:  { list: [ 'msg1', 'msg2', 'msg3' ], "body" : "body block" },
+     expected: "you have 3 new messages",
+     message: "should test size helper not supporting body"
+   },
+  {
     name:     "sizeHelper 3 items",
-    source:   'you have {@size subject=list/} new messages',
+    source:   'you have {@size key=list/} new messages',
     context:  { list: [ 'msg1', 'msg2', 'msg3' ] },
     expected: "you have 3 new messages",
     message: "should test if size Helper is working properly with array"
   },
   {
     name:     "sizeHelper string",
-    source:   "'{mystring}' has {@size subject=mystring/} letters",
+    source:   "'{mystring}' has {@size key=mystring/} letters",
     context:  { mystring: 'hello' },
     expected: "'hello' has 5 letters",
     message: "should test if size Helper is working properly with strings"
   },
   {
     name:     "sizeHelper string (empty)",
-    source:   "'{mystring}' has {@size subject=mystring/} letters",
+    source:   "'{mystring}' has {@size key=mystring/} letters",
     context:  { mystring: '' },
     expected: "'' has 0 letters",
     message: "should test if size Helper is working properly with strings"
   },
   {
     name:     "sizeHelper number",
-    source:   'you have {@size subject=mynumber/} new messages',
+    source:   'you have {@size key=mynumber/} new messages',
     context:  { mynumber: 10 },
     expected: "you have 10 new messages",
     message: "should test if size Helper is working properly with numbers"
   },
   {
     name:     "sizeHelper number",
-    source:   'you have {@size subject=mynumber/} new messages',
+    source:   'you have {@size key=mynumber/} new messages',
     context:  { mynumber: 0 },
     expected: "you have 0 new messages",
     message: "should test if size Helper is working properly with numbers"
   },
   {
     name:     "sizeHelper with object",
-    source:   'you have {@size subject=myValue/} new messages',
+    source:   'you have {@size key=myValue/} new messages',
     context:  { myValue: { foo:'bar', baz:'bax' } },
     expected: "you have 2 new messages",
     message: "should test if size Helper is working properly when the value is an object "
   },
   {
     name:     "sizeHelper with object",
-    source:   'you have {@size subject=myValue/} new messages',
+    source:   'you have {@size key=myValue/} new messages',
     context:  { myValue: {} },
     expected: "you have 0 new messages",
     message: "should test if size Helper is working properly when the value is an object that is zero"
   },
   {
     name:     "sizeHelper value not set",
-    source:   'you have {@size subject=myNumber/} new messages',
+    source:   'you have {@size key=myNumber/} new messages',
     context:  {},
     expected: "you have 0 new messages",
     message: "should test if size Helper is working properly when the value is not submitted at all"
@@ -590,6 +681,13 @@ var helpersTests = [
       expected: "A loop:0-2,B loop:0-2C[0]=Ca1 B loop:1-2C[0]=Ca2 A loop trailing: 0-2A loop:1-2,B loop:0-2C[0]=Cb1 B loop:1-2C[0]=Cb2 A loop trailing: 1-2",
       message: "test array reference $idx/$len nested loops"
   },
+  {
+       name:     "contextDump simple test does not support body",
+       source:   "{@contextDump}{body}{/contextDump}",
+       context:  {A:2, B:3},
+       expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
+       message: "contextDump simple test does not support body"
+   },
   {
       name:     "contextDump simple test",
       source:   "{@contextDump/}",

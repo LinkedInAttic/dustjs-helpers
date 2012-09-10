@@ -1,6 +1,6 @@
 {
   "name": "dustjs-helpers",
-  "version": "1.0.0",
+  "version": "1.1.x",
   "author": "Jairo de Morais",
   "description": "Helpers for dustjs-LinkedIn package",
   "contributors": [
@@ -30,7 +30,7 @@
   "devDependencies": {
     "jasmine-node"   :  "1.0.x",
     "cover"          :  "0.2.x",
-    "dustjs-linkedin":  "1.0.0"
+    "dustjs-linkedin":  "1.1.x"
   },
   "license": "MIT",
   "engine": {
