@@ -1,7 +1,7 @@
 {
   "name": "dustjs-helpers",
   "version": "1.1.0",
-  "author": "Jairo de Morais",
+  "author": "Aleksander Williams",
   "description": "Helpers for dustjs-LinkedIn package",
   "contributors": [
     {
@@ -15,6 +15,18 @@
     {
       "name": "Johnathan Leppert",
       "email":"jleppert@linkedin.com"
+    },
+    {
+      "name": "Jimmy Chan",
+      "email":"jchan@linkedin.com"
+    },
+    {
+      "name": "Richard Ragan",
+      "email":"rragan@ebay.com"
+    },
+    {
+      "name": "Sarah Clatterbuck",
+      "email": "sclatter@linkedin.com"
     }
   ],
   "scripts": {
@@ -24,7 +36,7 @@
   "main": "./lib/dust-helpers",
   "repository": {
     "type": "git",
-    "url": "https://jairodemorais@github.com/linkedin/dustjs.git"
+    "url": "https://github.com/linkedin/dustjs-helpers.git"
   },
   "keywords": ["templates", "views", "helpers"],
   "devDependencies": {
