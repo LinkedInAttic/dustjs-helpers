@@ -201,6 +201,76 @@ var helpersTests = [
      context:  {},
      expected: "",
      message: "eq helper non matching string case missing else block"
+  },
+  {
+     name:     "eq helper equal boolean case",
+     source:   "{@eq key=\"true\" value=\"true\" type=\"boolean\"}equal{/eq}",
+     context:  {},
+     expected: "equal",
+     message: "eq helper equal boolean case"
+  },
+  {
+     name:     "eq helper non equal boolean case",
+     source:   "{@eq key=\"false\" value=\"true\" type=\"boolean\"}equal{/eq}",
+     context:  {},
+     expected: "",
+     message: "eq helper non equal boolean case"
+  },
+  {
+    name:     "ne helper with no body",
+    source:   "{@ne key=\"foo\" value=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "ne helper with no body silently fails with console log"
+  },
+  {
+    name:     "ne helper matching string case",
+    source:   "{@ne key=\"foo\" value=\"foo\"}not equal{/ne}",
+    context:  {},
+    expected: "",
+    message: "ne helper matching string case"
+  },
+  {
+    name:     "ne helper non matching string case",
+    source:   "{@ne key=\"foo\" value=\"bar\"}not equal{:else}bar{/ne}",
+    context:  {},
+    expected: "not equal",
+    message: "ne helper non matching string case"
+  },
+  {
+     name:     "ne helper non matching string case missing else block",
+     source:   "{@ne key=\"foo\" value=\"bar\"}not equal{/ne}",
+     context:  {},
+     expected: "not equal",
+     message: "ne helper non matching string case missing else block"
+   },
+  {
+     name:     "ne helper non equal numbers case",
+     source:   "{@ne key=\"3\" value=\"5\" type=\"number\"}not equal{/ne}",
+     context:  {},
+     expected: "not equal",
+     message: "ne helper non equal numbers case"
+   },
+  {
+     name:     "ne helper equal numbers case",
+     source:   "{@ne key=\"3\" value=\"3\" type=\"number\"}not equal{/ne}",
+     context:  {},
+     expected: "",
+     message: "ne helper equal numbers case"
+   },
+  {
+     name:     "ne helper non equal boolean case",
+     source:   "{@ne key=\"false\" value=\"true\" type=\"boolean\"}not equal{/ne}",
+     context:  {},
+     expected: "not equal",
+     message: "ne helper non equal boolean case"
+   },
+  {
+     name:     "ne helper equal boolean case",
+     source:   "{@ne key=\"true\" value=\"true\" type=\"boolean\"}not equal{/ne}",
+     context:  {},
+     expected: "",
+     message: "ne helper equal boolean case"
    },
   {
     name:     "lt helper with no body",
