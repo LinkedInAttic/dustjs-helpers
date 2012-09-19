@@ -203,6 +203,34 @@ var helpersTests = [
      message: "eq helper non matching string case missing else block"
    },
   {
+    name:     "ne helper with no body",
+    source:   "{@ne key=\"foo\" value=\"foo\"/}",
+    context:  {},
+    expected: "",
+    message: "ne helper with no body silently fails with console log"
+  },
+  {
+    name:     "ne helper matching string case",
+    source:   "{@ne key=\"foo\" value=\"foo\"}not equal{/ne}",
+    context:  {},
+    expected: "",
+    message: "ne helper matching string case"
+  },
+  {
+    name:     "ne helper non matching string case",
+    source:   "{@ne key=\"foo\" value=\"bar\"}not equal{:else}bar{/ne}",
+    context:  {},
+    expected: "not equal",
+    message: "ne helper non matching string case"
+  },
+  {
+     name:     "ne helper non matching string case missing else block",
+     source:   "{@ne key=\"foo\" value=\"bar\"}not equal{/ne}",
+     context:  {},
+     expected: "not equal",
+     message: "ne helper non matching string case missing else block"
+   },
+  {
     name:     "lt helper with no body",
     source:   "{@lt key=\"2\" value=\"3\" type=\"number\"/}",
     context:  {},
