@@ -36,7 +36,7 @@ HELPERS = dist/dust-helpers-${VERSION}.js
 
 define HEADER
 //
-// Dust-helpers - Addional functionality for dustjs-linkedin package v${VERSION}
+// Dust-helpers - Additional functionality for dustjs-linkedin package v${VERSION}
 //
 // Copyright (c) 2012, LinkedIn
 // Released under the MIT License.
