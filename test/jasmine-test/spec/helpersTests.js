@@ -49,6 +49,34 @@ var helpersTests = [
     message: "should test the if helper using $idx"
   },
   {
+    name:     "math/mod helper with zero as key value",
+    source:   '<div>{@math key="0" method="mod" operand="16"/}</div>',
+    context:  {},
+    expected: "<div>0</div>",
+    message: "testing math/mod helper with zero as key value"
+  },
+  {
+     name:     "math/mod helper with zero as operand value",
+     source:   '<div>{@math key="0" method="mod" operand="0"/}</div>',
+     context:  {},
+     expected: "<div>NaN</div>",
+     message: "testing math/mod helper with zero as operand value"
+   },
+   {
+     name:     "math/divide helper with zero as key value",
+     source:   '<div>{@math key="0" method="divide" operand="16"/}</div>',
+     context:  {},
+     expected: "<div>0</div>",
+     message: "testing math/divide helper with zero as key value"
+   },
+   {
+      name:     "math/divide helper with zero as operand value",
+      source:   '<div>{@math key="0" method="divide" operand="0"/}</div>',
+      context:  {},
+      expected: "<div>NaN</div>",
+      message: "testing math/divide helper with zero as operand value"
+    },
+  {
     name:     "math helper mod numbers",
     source:   '<div>{@math key="16" method="mod" operand="4"/}</div>',
     context:  {},
@@ -63,11 +91,46 @@ var helpersTests = [
     message: "should test the math/mod helper using $idx"
   },
   {
+    name:     "math helper mod using $idx without quotes",
+    source:   '{#list}<div>{@math key=$idx method="mod" operand="5"/}</div>{/list}',
+    context:  { list: [ { y: 'foo' } ]},
+    expected: "<div>0</div>",
+    message: "should test the math/mod helper using $idx without quotes"
+  },
+  {
     name:     "math helper subtract numbers",
     source:   '<div>{@math key="16" method="subtract" operand="4"/}</div>',
     context:  {},
     expected: "<div>12</div>",
     message: "testing math/subtract helper with two numbers"
+  },
+  {
+    name:     "math helper subtract with key as negative number",
+    source:   '<div>{@math key="-16" method="subtract" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>-20</div>",
+    message: "testing math/subtract helper with key as negative number"
+  },
+  {
+    name:     "math helper add negative numbers",
+    source:   '<div>{@math key="-16" method="add" operand="-4"/}</div>',
+    context:  {},
+    expected: "<div>-20</div>",
+    message: "testing math/add helper with negative numbers"
+  },
+  {
+     name:     "math helper zero key",
+     source:   '<div>{@math key="0" method="subtract" operand="0"/}</div>',
+     context:  {},
+     expected: "<div>0</div>",
+     message: "testing math helper with zero as the operand"
+  },
+  {
+      name:     "math helper zero key",
+      source:   '<div>{@math key="0" method="multiply" operand="0"/}</div>',
+      context:  {},
+      expected: "<div>0</div>",
+      message: "testing math helper with zero key"
   },
   {
     name:     "math helper zero operand",
@@ -210,11 +273,25 @@ var helpersTests = [
      message: "eq helper equal boolean case"
   },
   {
-     name:     "eq helper non equal boolean case",
+     name:     "eq helper non equal/false boolean case",
      source:   "{@eq key=\"false\" value=\"true\" type=\"boolean\"}equal{/eq}",
      context:  {},
      expected: "",
      message: "eq helper non equal boolean case"
+  },
+  {
+     name:     "not eq helper true/notequal  boolean case",
+     source:   "{@ne key=\"true\" value=\"false\" type=\"boolean\"}not equal{/ne}",
+     context:  {},
+     expected: "not equal",
+     message: "not eq helper true/notequal  boolean case"
+  },
+  {
+     name:     "not eq helper alse/equal boolean case",
+     source:   "{@ne key=\"false\" value=\"false\" type=\"boolean\"}equal{/ne}",
+     context:  {},
+     expected: "",
+     message: "not eq helper alse/equal boolean case"
   },
   {
     name:     "ne helper with no body",
