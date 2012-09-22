@@ -56,11 +56,39 @@ var helpersTests = [
     message: "testing math/mod helper with zero as key value"
   },
   {
+     name:     "math/mod helper with zero as key value",
+     source:   '<div>{@math key="0" method="mod" operand="-16"/}</div>',
+     context:  {},
+     expected: "<div>0</div>",
+     message: "testing math/mod helper with zero as key value"
+   },
+  {
+       name:     "math/mod helper with zero as key value and operand as variable as variable without quotes",
+       source:   '<div>{@math key="0" method="mod" operand=y/}</div>',
+       context:  { y: 4},
+       expected: "<div>0</div>",
+       message: "testing math/mod helper with zero as key value and operand as variable without quotes"
+  },
+  {
+       name:     "math/mod helper with zero as key value  and operand as variable with quotes",
+       source:   '<div>{@math key="0" method="mod" operand="{y}"/}</div>',
+       context:  { y: 4},
+       expected: "<div>0</div>",
+       message: "testing math/mod helper with zero as key value  and operand as variable with quotes"
+  },
+  {
      name:     "math/mod helper with zero as operand value",
      source:   '<div>{@math key="0" method="mod" operand="0"/}</div>',
      context:  {},
      expected: "<div>NaN</div>",
      message: "testing math/mod helper with zero as operand value"
+   },
+   {
+       name:     "math/mod helper with negative zero as operand value",
+       source:   '<div>{@math key="0" method="mod" operand="-0"/}</div>',
+       context:  {},
+       expected: "<div>NaN</div>",
+       message: "testing math/mod helper with negative zero as operand value"
    },
    {
      name:     "math/divide helper with zero as key value",
@@ -91,11 +119,39 @@ var helpersTests = [
     message: "should test the math/mod helper using $idx"
   },
   {
+     name:     "math helper mod using $idx without quotes with lizt size = 2",
+     source:   '{#list}<div>{@math key="{$idx}" method="mod" operand="2"/}</div>{/list}',
+     context:  { list: [ { y: 'foo' }, { y: "bar"} ]},
+     expected: "<div>0</div><div>1</div>",
+     message: "should test the math/mod helper using $idx without quotes with lizt size = 2"
+   },
+  {
     name:     "math helper mod using $idx without quotes",
     source:   '{#list}<div>{@math key=$idx method="mod" operand="5"/}</div>{/list}',
     context:  { list: [ { y: 'foo' } ]},
     expected: "<div>0</div>",
     message: "should test the math/mod helper using $idx without quotes"
+  },
+  {
+    name:     "math helper mod using $idx without quotes with lizt size = 2",
+    source:   '{#list}<div>{@math key=$idx method="mod" operand="2"/}</div>{/list}',
+    context:  { list: [ { y: 'foo' }, { y: "bar"} ]},
+    expected: "<div>0</div><div>1</div>",
+    message: "should test the math/mod helper using $idx without quotes with lizt size = 2"
+  },
+  {
+    name:     "math helper mod using $len",
+    source:   '{#list}<div>{@math key="{$len}" method="mod" operand="5"/}</div>{/list}',
+    context:  { list: [ { y: 'foo' } ]},
+    expected: "<div>1</div>",
+    message: "should test the math/mod helper using $len"
+  },
+  {
+    name:     "math helper mod using $len without quotes",
+    source:   '{#list}<div>{@math key=$len method="mod" operand="5"/}</div>{/list}',
+    context:  { list: [ { y: 'foo' } ]},
+    expected: "<div>1</div>",
+    message: "should test the math/mod helper using $len without quotes"
   },
   {
     name:     "math helper subtract numbers",
@@ -105,12 +161,40 @@ var helpersTests = [
     message: "testing math/subtract helper with two numbers"
   },
   {
+    name:     "math helper add with key as negative number",
+    source:   '<div>{@math key="-16" method="add" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>-12</div>",
+    message: "testing math/add helper with key as negative number"
+  },
+  {
     name:     "math helper subtract with key as negative number",
     source:   '<div>{@math key="-16" method="subtract" operand="4"/}</div>',
     context:  {},
     expected: "<div>-20</div>",
     message: "testing math/subtract helper with key as negative number"
   },
+  {
+    name:     "math helper multiply with key as negative number",
+    source:   '<div>{@math key="-2" method="multiply" operand="4"/}</div>',
+    context:  {},
+    expected: "<div>-8</div>",
+    message: "testing math/multiply helper with key as negative number"
+  },
+  {
+    name:     "math helper multiply with key as negative number and variable operand without quotes",
+    source:   '<div>{@math key="-2" method="multiply" operand=y/}</div>',
+    context:  { y:4},
+    expected: "<div>-8</div>",
+    message: "testing math/multiply helper with key as negative number  and variable operand without quotes"
+  },
+  {
+     name:     "math helper multiply with key as negative number and variable operand with quotes",
+     source:   '<div>{@math key="-2" method="multiply" operand="{y}"/}</div>',
+     context:  { y:4},
+     expected: "<div>-8</div>",
+     message: "testing math/multiply helper with key as negative number and variable operand with quotes"
+   },
   {
     name:     "math helper add negative numbers",
     source:   '<div>{@math key="-16" method="add" operand="-4"/}</div>',
@@ -119,7 +203,28 @@ var helpersTests = [
     message: "testing math/add helper with negative numbers"
   },
   {
-     name:     "math helper zero key",
+    name:     "math helper subtract negative numbers",
+    source:   '<div>{@math key="-16" method="subtract" operand="-4"/}</div>',
+    context:  {},
+    expected: "<div>-12</div>",
+    message: "testing math/subtract helper with negative numbers"
+  },
+  {
+    name:     "math helper multiply negative numbers",
+    source:   '<div>{@math key="-0" method="multiply" operand="-4"/}</div>',
+    context:  {},
+    expected: "<div>0</div>",
+    message: "testing math/multiply helper with negative numbers"
+  },
+  {
+     name:     "math helper blah operation",
+     source:   '{@math key="-0" method="blah" operand="-4"/}',
+     context:  {},
+     expected: "",
+     message: "math helper blah operation"
+   },
+  {
+     name:     "math helper key as zero",
      source:   '<div>{@math key="0" method="subtract" operand="0"/}</div>',
      context:  {},
      expected: "<div>0</div>",
@@ -131,6 +236,13 @@ var helpersTests = [
       context:  {},
       expected: "<div>0</div>",
       message: "testing math helper with zero key"
+  },
+  {
+      name:     "math helper zero key and operand for divide",
+      source:   '<div>{@math key="0" method="divide" operand="0"/}</div>',
+      context:  {},
+      expected: "<div>NaN</div>",
+      message: "testing math helper with zero key and operand for divide"
   },
   {
     name:     "math helper zero operand",
@@ -168,6 +280,69 @@ var helpersTests = [
     message: "testing math/divide helper with variable as operand"
   },
   {
+    name:     "math helper divide  with null as key and operand value",
+    source:   '<div>{@math key="{y}" method="divide" operand="{y}"/}</div>',
+    context:  { y : null},
+    expected: "<div>NaN</div>",
+    message: "testing math/divide helper with null as key and operand value"
+  },
+  {
+    name:     "math helper divide  with null as operand value",
+    source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+    context:  { y : null},
+    expected: "<div>NaN</div>",
+    message: "testing math/divide helper with null as operand value"
+  },
+  {
+     name:     "math helper divide  with null as undefined value",
+     source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+     context:  { y : undefined},
+     expected: "<div>NaN</div>",
+     message: "testing math/divide helper with null as undefined value"
+   },
+  {
+     name:     "math helper mod with negative 0 as operand",
+     source:   '<div>{@math key="16" method="mod" operand="{y}"/}</div>',
+     context:  { y : -0 },
+     expected: "<div>NaN</div>",
+     message: "testing math/mod helper with negative 0 as operand"
+  },
+  {
+     name:     "math helper mod with null as key and operand",
+     source:   '<div>{@math key="{y}" method="mod" operand="{y}"/}</div>',
+     context:  { y : null },
+     expected: "<div>NaN</div>",
+     message: "testing math helper mod with null as key and operand"
+  },
+  {
+     name:     "math helper divide using negative value for variable",
+     source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+     context:  { y : -4 },
+     expected: "<div>-4</div>",
+     message: "testing math/divide helper using negative value for variable as operand"
+  },
+  {
+       name:     "math helper divide using key as non numeric",
+       source:   '<div>{@math key="doh" method="divide" operand="{y}"/}</div>',
+       context:  { y : 0 },
+       expected: "<div>NaN</div>",
+       message: "testing math/divide helper using key as non numeric"
+  },
+  {
+       name:     "math helper divide using 0 for variable",
+       source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+       context:  { y : 0 },
+       expected: "<div>Infinity</div>",
+       message: "testing math/divide helper using 0 for variable as operand"
+   },
+  {
+      name:     "math helper divide using negative 0 for variable",
+      source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
+      context:  { y : -0 },
+      expected: "<div>Infinity</div>",
+      message: "testing math/divide helper using negative 0 for variable as operand"
+  },
+  {
     name:     "math helper floor numbers",
     source:   '<div>{@math key="16.5" method="floor"/}</div>',
     context:  {},
@@ -181,12 +356,27 @@ var helpersTests = [
     expected: "<div>17</div>",
     message: "testing math/ceil helper with two numbers"
   },
+  
+  {
+    name:     "math helper abs numbers with missing key",
+    source:   '<div>{@math key="{key}" method="abs"/}</div>',
+    context:  {},
+    expected: "<div>NaN</div>",
+    message: "testing math/abs helper with missing key"
+  },
   {
     name:     "math helper abs numbers",
     source:   '<div>{@math key="-16" method="abs"/}</div>',
     context:  {},
     expected: "<div>16</div>",
     message: "testing math/abs helper with two numbers"
+  },
+  {
+    name:     "math helper abs numbers with null key",
+    source:   '<div>{@math key="{key}" method="abs"/}</div>',
+    context:  {key : null},
+    expected: "<div>NaN</div>",
+    message: "testing math/abs helper with null key"
   },
   {
     name:     "math helper eq filter",
