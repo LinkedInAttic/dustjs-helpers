@@ -837,186 +837,172 @@ var helpersTests = [
     message: "should test async iterator"
   },
   {
-     name:     "sizeHelper does not support body",
+     name:     "size helper does not support body",
      source:   'you have {@size key=list}{body}{/size} new messages',
      context:  { list: [ 'msg1', 'msg2', 'msg3' ], "body" : "body block" },
      expected: "you have 3 new messages",
      message: "should test size helper not supporting body"
    },
   {
-    name:     "sizeHelper 3 items",
+    name:     "size helper 3 items",
     source:   'you have {@size key=list/} new messages',
     context:  { list: [ 'msg1', 'msg2', 'msg3' ] },
     expected: "you have 3 new messages",
-    message: "should test if size Helper is working properly with array"
+    message: "should test if size helper is working properly with array"
   },
   {
-    name:     "sizeHelper string",
+    name:     "size helper string",
     source:   "'{mystring}' has {@size key=mystring/} letters",
     context:  { mystring: 'hello' },
     expected: "'hello' has 5 letters",
-    message: "should test if size Helper is working properly with strings"
+    message: "should test if size helper is working properly with strings"
   },
   {
-    name:     "sizeHelper string (empty)",
+    name:     "size helper string (empty)",
     source:   "'{mystring}' has {@size key=mystring/} letters",
     context:  { mystring: '' },
     expected: "'' has 0 letters",
-    message: "should test if size Helper is working properly with strings"
+    message: "should test if size helper is working properly with strings"
   },
   {
-    name:     "sizeHelper number",
-    source:   'you have {@size key=mynumber/} new messages',
-    context:  { mynumber: 10 },
-    expected: "you have 10 new messages",
-    message: "should test if size Helper is working properly with numbers"
+    name:     "size helper for newline",
+    source:   "{@size key=mystring/} letters",
+    context:  { mystring: '\n' },
+    expected: "1 letters",
+    message: "should test if size is working for newline"
   },
   {
-    name:     "sizeHelper number",
+    name:     "size helper string with newline",
+    source:   "{@size key=mystring/} letters",
+    context:  { mystring: 'test\n' },
+    expected: "5 letters",
+    message: "should test if size for string with newline"
+  },
+  {
+    name:     "size helper string with newline, tab, carriage return and bakspace",
+    source:   "{@size key=mystring/} letters",
+    context:  { mystring: 'test\n\t\r\b' },
+    expected: "8 letters",
+    message: "should test if size helper is working for string with newline, tab, carriage return and bakspace"
+  },
+  {
+    name:     "size helper number",
     source:   'you have {@size key=mynumber/} new messages',
     context:  { mynumber: 0 },
     expected: "you have 0 new messages",
-    message: "should test if size Helper is working properly with numbers"
+    message: "should test if size helper is working properly with numeric 0"
   },
   {
-    name:     "sizeHelper with object",
+    name:     "size helper number",
+    source:   'you have {@size key=mynumber/} new messages',
+    context:  { mynumber: 10 },
+    expected: "you have 10 new messages",
+    message: "should test if size helper is working properly with numeric 10"
+  },
+  {
+    name:     "size helper floating numeric",
+    source:   'you have {@size key=mynumber/} new messages',
+    context:  { mynumber: 0.4 },
+    expected: "you have 0.4 new messages",
+    message: "should test if size helper is working properly with floating numeric"
+  },
+  {
+     name:     "size helper with boolean false",
+     source:   'you have {@size key=myboolean/} new messages',
+     context:  { myboolean: false },
+     expected: "you have 0 new messages",
+     message: "should test if size helper is working properly with boolean false"
+  },
+  {
+      name:     "size helper with boolean true",
+      source:   'you have {@size key=myboolean/} new messages',
+      context:  { myboolean: true },
+      expected: "you have 0 new messages",
+      message: "should test if size helper is working properly with boolean true"
+  }, 
+  {
+    name:     "size helper with object",
     source:   'you have {@size key=myValue/} new messages',
     context:  { myValue: { foo:'bar', baz:'bax' } },
     expected: "you have 2 new messages",
-    message: "should test if size Helper is working properly when the value is an object "
+    message: "should test if size helper is working properly when the value is an object "
   },
   {
-    name:     "sizeHelper with object",
+    name:     "size helper with object",
     source:   'you have {@size key=myValue/} new messages',
     context:  { myValue: {} },
     expected: "you have 0 new messages",
-    message: "should test if size Helper is working properly when the value is an object that is zero"
+    message: "should test if size helper is working properly when the value is an object that is zero"
   },
   {
-    name:     "sizeHelper value not set",
+    name:     "size helper value not set",
     source:   'you have {@size key=myNumber/} new messages',
     context:  {},
     expected: "you have 0 new messages",
-    message: "should test if size Helper is working properly when the value is not submitted at all"
+    message: "should test if size helper is working properly when the value is not present in context"
   },
   {
-    name:     "tapHelper: Plain text string literal",
+    name:     "tap helper: Plain text string literal",
     source:   'plain text. {@tapper value="plain text"/}',
     context:  {},
     expected: "plain text. plain text",
-    message: "should test if tap Helper is working properly when the value is plain text"
+    message: "should test if tap helper is working properly when the value is plain text"
   },
   {
-    name:     "tapHelper: string literal that includes a string-valued {context variable}",
+    name:     "tap helper: string literal that includes a string-valued {context variable}",
     source:   'a is {a}. {@tapper value="a is {a}"/}',
     context:  { a : "Alpha" },
     expected: "a is Alpha. a is Alpha",
-    message: "should test if tap Helper is working properly when the value is a text that inclues a string-valued {context variable}"
+    message: "should test if tap helper is working properly when the value is a text that inclues a string-valued {context variable}"
   },
   {
-    name:     "tapHelper: reference to string-valued context variable",
+    name:     "tap helper: reference to string-valued context variable",
     source:   '{a}. {@tapper value=a/}',
     context:  { a : "Alpha" },
     expected: "Alpha. Alpha",
-    message: "should test if tap Helper is working properly when it makes referece to string-valued context variable"
+    message: "should test if tap helper is working properly when it makes referece to string-valued context variable"
   },
   {
-    name:     "tapHelper: string literal that includes a string-valued {context function}",
+    name:     "tap helper: string literal that includes a string-valued {context function}",
     source:   'b is {b}. {@tapper value="b is {b}"/}',
     context:  { "b" : function() { return "beta"; } },
     expected: "b is beta. b is beta",
-    message: "should test if tap Helper is working properly when the value is a string literal that includes a string-valued {context function}"
+    message: "should test if tap helper is working properly when the value is a string literal that includes a string-valued {context function}"
   },
   {
-    name:     "tapHelper: reference to a a string-valued {context function}",
+    name:     "tap helper: reference to a a string-valued {context function}",
     source:   '{b}. {@tapper value=b/}',
     context:  { "b" : function() { return "beta"; } },
     expected: "beta. beta",
-    message: "should test if tap Helper is working properly when it makes reference to a a string-valued {context function}"
+    message: "should test if tap helper is working properly when it makes reference to a a string-valued {context function}"
   },
   {
-    name:     "tapHelper: string literal that includes an object-valued {context variable}",
+    name:     "tap helper: string literal that includes an object-valued {context variable}",
     source:   'a.foo is {a.foo}. {@tapper value="a.foo is {a.foo}"/}',
     context:  { "a" : {"foo":"bar"} },
     expected: "a.foo is bar. a.foo is bar",
-    message: "should test if tap Helper is working properly when the value is a string literal that includes an object-valued {context variable}"
+    message: "should test if tap helper is working properly when the value is a string literal that includes an object-valued {context variable}"
   },
   {
-    name:     "tapHelper: reference to an object-valued {context variable}",
+    name:     "tap helper: reference to an object-valued {context variable}",
     source:   '{a.foo}. {@tapper value=a.foo/}',
     context:  { "a" : {"foo":"bar"} },
     expected: "bar. bar",
-    message: "should test if tap Helper is working properly when it makes reference to an object-valued {context variable}"
+    message: "should test if tap helper is working properly when it makes reference to an object-valued {context variable}"
   },
   {
-    name:     "tapHelper: string literal that calls a function within an object-valued {context variable}",
+    name:     "tap helper: string literal that calls a function within an object-valued {context variable}",
     source:   'a.foo is {a.foo}. {@tapper value="a.foo is {a.foo}"/}',
     context:  { "a" : {"foo" : function() { return "bar"; } } },
     expected: "a.foo is bar. a.foo is bar",
-    message: "should test if tap Helper is working properly when the value is string literal that calls a function within an object-valued {context variable}"
+    message: "should test if tap helper is working properly when the value is string literal that calls a function within an object-valued {context variable}"
   },
   {
-    name:     "tapHelper: reference to a function within an object-valued {context variable}",
+    name:     "tap helper: reference to a function within an object-valued {context variable}",
     source:   '{a.foo} {@tapper value=a.foo/}',
     context:  { "a" : {"foo" : function() { return "bar"; } } },
     expected: "bar bar",
-    message: "should test if tap Helper is working properly when it makes reference to a function within an object-valued {context variable}"
-  },
-  {
-     name:     "array: reference $idx in iteration on objects",
-     source:   "{#names}({$idx}).{title} {name}{~n}{/names}",
-     context:  { title: "Sir", names: [ { name: "Moe" }, { name: "Larry" }, { name: "Curly" } ] },
-     expected: "(0).Sir Moe\n(1).Sir Larry\n(2).Sir Curly\n",
-     message: "array: reference $idx in iteration on objects"
-  },
-  {
-      name:     "array: reference $len in iteration on objects",
-      source:   "{#names}Size=({$len}).{title} {name}{~n}{/names}",
-      context:  { title: "Sir", names: [ { name: "Moe" }, { name: "Larry" }, { name: "Curly" } ] },
-      expected: "Size=(3).Sir Moe\nSize=(3).Sir Larry\nSize=(3).Sir Curly\n",
-      message: "test array: reference $len in iteration on objects"
-  },
-  {
-     name:     "array reference $idx in iteration on simple type",
-     source:   "{#names}({$idx}).{title} {.}{~n}{/names}",
-     context:  { title: "Sir", names: [ "Moe", "Larry", "Curly" ] },
-     expected: "(0).Sir Moe\n(1).Sir Larry\n(2).Sir Curly\n",
-     message: "test array reference $idx in iteration on simple types"
-  },
-  {
-      name:     "array reference $len in iteration on simple type",
-      source:   "{#names}Size=({$len}).{title} {.}{~n}{/names}",
-      context:  { title: "Sir", names: [ "Moe", "Larry", "Curly" ] },
-      expected: "Size=(3).Sir Moe\nSize=(3).Sir Larry\nSize=(3).Sir Curly\n",
-      message: "test array reference $len in iteration on simple types"
-  },
-  {
-      name:     "array reference $idx/$len on empty array case",
-      source:   "{#names}Idx={$idx} Size=({$len}).{title} {.}{~n}{/names}",
-      context:  { title: "Sir", names: [ ] },
-      expected: "",
-      message: "test array reference $idx/$len on empty array case"
-  },
-  {
-      name:     "array reference $idx/$len on single element case",
-      source:   "{#names}Idx={$idx} Size={$len} {.}{/names}",
-      context:  { names: "Just one name" },
-      expected: "Idx=0 Size=1 Just one name",
-      message: "test array reference $idx/$len on single element case"
-  },
-  {
-      name:     "array reference $idx/$len {#.} section case",
-      source:   "{#names}{#.}{$idx}{.} {/.}{/names}",
-      context:  { names:  ["Moe", "Larry", "Curly"] },
-      expected: "0Moe 1Larry 2Curly ",
-      message: "test array reference $idx/$len {#.} section case"
-  },
-  {
-      name:     "array reference $idx/$len nested loops",
-      source:   "{#A}A loop:{$idx}-{$len},{#B}B loop:{$idx}-{$len}C[0]={.C[0]} {/B}A loop trailing: {$idx}-{$len}{/A}",
-      context:  {"A": [ {"B": [ {"C": ["Ca1", "C2"]}, {"C": ["Ca2", "Ca22"]} ] }, {"B": [ {"C": ["Cb1", "C2"]}, {"C": ["Cb2", "Ca2"]} ] } ] },
-      expected: "A loop:0-2,B loop:0-2C[0]=Ca1 B loop:1-2C[0]=Ca2 A loop trailing: 0-2A loop:1-2,B loop:0-2C[0]=Cb1 B loop:1-2C[0]=Cb2 A loop trailing: 1-2",
-      message: "test array reference $idx/$len nested loops"
+    message: "should test if tap helper is working properly when it makes reference to a function within an object-valued {context variable}"
   },
   {
        name:     "contextDump simple test does not support body",
@@ -1024,7 +1010,7 @@ var helpersTests = [
        context:  {A:2, B:3},
        expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
        message: "contextDump simple test does not support body"
-   },
+  },
   {
       name:     "contextDump simple test",
       source:   "{@contextDump/}",
