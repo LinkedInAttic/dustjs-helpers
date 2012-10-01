@@ -1,3 +1,10 @@
+//
+// Dust-helpers - Additional functionality for dustjs-linkedin package v1.1.0
+//
+// Copyright (c) 2012, LinkedIn
+// Released under the MIT License.
+//
+
 (function(){
 
 if (typeof exports !== "undefined")
