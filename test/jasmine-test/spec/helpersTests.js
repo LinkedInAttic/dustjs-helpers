@@ -547,11 +547,60 @@ var helpersTests = [
     message: "lt helper with no body silently fails with console log"
   },
   {
-    name:     "lt helper with type number",
-    source:   "{@lt key=\"2\" value=\"3\" type=\"number\"}2 less than 3{/lt}",
+    name:     "lt helper defaults to type number",
+    source:   "{@lt key=\"22\" value=\"33\"}22 less than 33{/lt}",
     context:  {},
-    expected: "2 less than 3",
-    message: "lt helper with type number"
+    expected: "22 less than 33",
+    message: "lt helper will default to type number"
+  },
+  {
+    name:     "lt helper with a variable with explicit type number",
+    source:   "{@lt key=\"{a}\" value=\"33\" type=\"number\"}22 less than 33{/lt}",
+    context:  {a:22},
+    expected: "22 less than 33",
+    message: "lt helper with a variable with explicit type number"
+  },
+  {
+    name:     "lt helper with a variable defaults to type number ( type is not mandatory)",
+    source:   "{@lt key=\"{a}\" value=\"33\"}22 less than 33{/lt}",
+    context:  {a:22},
+    expected: "22 less than 33",
+    message: "lt helper with a variable will default to type number"
+  },
+  {
+    name:     "lt helper with a variable defaults to type number",
+    source:   "{@lt key=a value=\"33\"}22 less than 33{/lt}",
+    context:  {a:22},
+    expected: "22 less than 33",
+    message: "lt helper with a variable will default to type number"
+  },
+  {
+    name:     "lt helper with a variable type returned as string from tap",
+    source:   "{@lt key=\"{a}\" value=\"3\"}22 less than 3, since it is string compare{/lt}",
+    context:  {a:22},
+    expected: "22 less than 3, since it is string compare",
+    message: "lt helper with a variable type returned as string from tap"
+  },
+  {
+    name:     "lt helper with a variable type returned as int from tap",
+    source:   "{@lt key=a value=\"3\"}22 less than 3{/lt}",
+    context:  {a:22},
+    expected: "",
+    message: "lt helper with a with a variable type returned as int from tap"
+  },
+  {
+    name:     "lt helper with a variable with type string representing int",
+    source:   "{@lt key=a value=\"33\"}22 less than 33{/lt}",
+    context:  {a:"22"},
+    expected: "22 less than 33",
+    message: "lt helper with a variable with type string representing int"
+  },
+  {
+    name:     "lt helper with a variable with type string representing float",
+    source:   "{@lt key=a value=\"33\"}22 less than 33{/lt}",
+    context:  {a:"22.33"},
+    expected: "22 less than 33",
+    message: "lt helper with a variable with type string representing float"
   },
   {
      name:     "gt helper with type string not valid case",
