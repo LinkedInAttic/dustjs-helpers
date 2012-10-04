@@ -1,4 +1,11 @@
 var helpersTests = [
+ {
+  name:     "hello_there",
+  source:   "Hello {name}! You have {count} new messages.",
+  context:  { name: "Mick", count: 30 },
+  expected: "Hello Mick! You have 30 new messages.",
+  message: "should test a basic replace"
+  },
   {
     name:     "if helper with no body",
     source:   '{@if cond="{x}<{y}"/}',
@@ -1057,7 +1064,37 @@ var helpersTests = [
       context:  { "aa": ["a"], "p" : 42},
       expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk,ctx){return chk.reference(ctx.get(\\\"p\\\"),ctx,\\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
       message: "contextDump function dump test"
-  }
+  },
+   {
+     name:     "idx helper within partial included in a array",
+     source:   '{#n}{@idx}{.}>>{/idx}{>hello_there name=. count="30"/}{/n}',
+     context:  { n: ["Mick", "Tom", "Bob"] },
+     expected: "0>>Hello Mick! You have 30 new messages.1>>Hello Tom! You have 30 new messages.2>>Hello Bob! You have 30 new messages.",
+     message: "should test idx helper within partial included in a array"
+   },
+   {
+     name:     "sep helper within partial included in a array",
+     source:   '{#n}{>hello_there name=. count="30"/}{@sep} {/sep}{/n}',
+     context:  { n: ["Mick", "Tom", "Bob"] },
+     expected: "Hello Mick! You have 30 new messages. Hello Tom! You have 30 new messages. Hello Bob! You have 30 new messages.",
+     message: "should test sep helper within partial included in a array"
+   },
+   {
+     name:     "sep helper in a async_iterator",
+     source:   "{#numbers}{#delay}{.}{/delay}{@sep}, {/sep}{/numbers}",
+     context:  {
+                 numbers: [3, 2, 1],
+                 delay: function(chunk, context, bodies) {
+                   return chunk.map(function(chunk) {
+                     setTimeout(function() {
+                       chunk.render(bodies.block, context).end();
+                     }, Math.ceil(Math.random()*10));
+                   });
+                 }
+               },
+     expected: "3, 2, 1",
+     message: "should sep helper in a async_iterator"
+   },
 ];
 
 if (typeof module !== "undefined" && typeof require !== "undefined") {
