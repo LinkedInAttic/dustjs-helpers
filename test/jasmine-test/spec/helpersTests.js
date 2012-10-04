@@ -1,12 +1,5 @@
 var helpersTests = [
   {
-    name:     "replace",
-    source:   "Hello {name}! You have {count} new messages.",
-    context:  { name: "Mick", count: 30 },
-    expected: "Hello Mick! You have 30 new messages.",
-    message: "should test a basic replace"
-  },
-  {
     name:     "if helper with no body",
     source:   '{@if cond="{x}<{y}"/}',
     context:  { x: 2, y: 3 },
@@ -184,14 +177,14 @@ var helpersTests = [
   {
     name:     "math helper multiply with key as negative number and variable operand without quotes",
     source:   '<div>{@math key="-2" method="multiply" operand=y/}</div>',
-    context:  { y:4},
+    context:  { y: 4},
     expected: "<div>-8</div>",
     message: "testing math/multiply helper with key as negative number  and variable operand without quotes"
   },
   {
      name:     "math helper multiply with key as negative number and variable operand with quotes",
      source:   '<div>{@math key="-2" method="multiply" operand="{y}"/}</div>',
-     context:  { y:4},
+     context:  { y: 4},
      expected: "<div>-8</div>",
      message: "testing math/multiply helper with key as negative number and variable operand with quotes"
    },
@@ -556,35 +549,35 @@ var helpersTests = [
   {
     name:     "lt helper with a variable with explicit type number",
     source:   "{@lt key=\"{a}\" value=\"33\" type=\"number\"}22 less than 33{/lt}",
-    context:  {a:22},
+    context:  {a: 22},
     expected: "22 less than 33",
     message: "lt helper with a variable with explicit type number"
   },
   {
     name:     "lt helper with a variable defaults to type number ( type is not mandatory)",
     source:   "{@lt key=\"{a}\" value=\"33\"}22 less than 33{/lt}",
-    context:  {a:22},
+    context:  {a: 22},
     expected: "22 less than 33",
     message: "lt helper with a variable will default to type number"
   },
   {
     name:     "lt helper with a variable defaults to type number",
     source:   "{@lt key=a value=\"33\"}22 less than 33{/lt}",
-    context:  {a:22},
+    context:  {a: 22},
     expected: "22 less than 33",
     message: "lt helper with a variable will default to type number"
   },
   {
     name:     "lt helper with a variable type returned as string from tap",
     source:   "{@lt key=\"{a}\" value=\"3\"}22 less than 3, since it is string compare{/lt}",
-    context:  {a:22},
+    context:  {a: 22},
     expected: "22 less than 3, since it is string compare",
     message: "lt helper with a variable type returned as string from tap"
   },
   {
     name:     "lt helper with a variable type returned as int from tap",
     source:   "{@lt key=a value=\"3\"}22 less than 3{/lt}",
-    context:  {a:22},
+    context:  {a: 22},
     expected: "",
     message: "lt helper with a with a variable type returned as int from tap"
   },
@@ -863,29 +856,6 @@ var helpersTests = [
     message: "eq helper without a body should fail gracefully and return nothing"
   },
   {
-    name:     "partial within a array",
-    source:   '{#n}{>replace name=. count="30"/}{@sep} {/sep}{/n}',
-    context:  { n: ["Mick", "Tom", "Bob"] },
-    expected: "Hello Mick! You have 30 new messages. Hello Tom! You have 30 new messages. Hello Bob! You have 30 new messages.",
-    message: "should test partial within an array"
-  },
-  {
-    name:     "async_iterator",
-    source:   "{#numbers}{#delay}{.}{/delay}{@sep}, {/sep}{/numbers}",
-    context:  {
-                numbers: [3, 2, 1],
-                delay: function(chunk, context, bodies) {
-                  return chunk.map(function(chunk) {
-                    setTimeout(function() {
-                      chunk.render(bodies.block, context).end();
-                    }, Math.ceil(Math.random()*10));
-                  });
-                }
-              },
-    expected: "3, 2, 1",
-    message: "should test async iterator"
-  },
-  {
      name:     "size helper does not support body",
      source:   'you have {@size key=list}{body}{/size} new messages',
      context:  { list: [ 'msg1', 'msg2', 'msg3' ], "body" : "body block" },
@@ -1056,35 +1026,35 @@ var helpersTests = [
   {
        name:     "contextDump simple test does not support body",
        source:   "{@contextDump}{body}{/contextDump}",
-       context:  {A:2, B:3},
+       context:  { "A" : 2, "B": 3},
        expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
        message: "contextDump simple test does not support body"
   },
   {
       name:     "contextDump simple test",
       source:   "{@contextDump/}",
-      context:  {A:2, B:3},
+      context:  { "A": 2, "B": 3},
       expected: "{\n  \"A\": 2,\n  \"B\": 3\n}",
       message: "contextDump simple test"
   },
   {
       name:     "contextDump simple test dump to console",
       source:   "{@contextDump to=\"console\"/}",
-      context:  {A:2, B:3},
+      context:  { "A": 2, "B": 3},
       expected: "",
       message: "contextDump simple test"
   },
   {
       name:     "contextDump full test",
       source:   "{@contextDump key=\"full\"/}",
-      context:  {aa:{A:2, B:3}},
+      context:  { aa: { "A": 2, "B": 3} },
       expected: "{\n  \"isObject\": true,\n  \"head\": {\n    \"aa\": {\n      \"A\": 2,\n      \"B\": 3\n    }\n  }\n}",
       message: "contextDump full test"
   },
   {
       name:     "contextDump function dump test",
       source:   "{#aa param=\"{p}\"}{@contextDump key=\"full\"/}{/aa}",
-      context:  {aa:["a"],p:42},
+      context:  { "aa": ["a"], "p" : 42},
       expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk,ctx){return chk.reference(ctx.get(\\\"p\\\"),ctx,\\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
       message: "contextDump function dump test"
   }
