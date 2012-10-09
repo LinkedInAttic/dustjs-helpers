@@ -1,7 +1,7 @@
 (function(){
 	dust.register("select",body_0);
   function body_0(chk,ctx){
-  	return chk.write("<select style=\"clear: both;width: 496px;\">").section(ctx.get("examples"),ctx,{"block":body_1},null).write("</select>");
+  	return chk.write("<select style=\"clear: both;width: 230px;\">").section(ctx.get("examples"),ctx,{"block":body_1},null).write("</select>");
   }
 	function body_1(chk,ctx){
 		return chk.write("<option ").reference(ctx.get("selected"),ctx,"h").write("value=\"").helper("idx",ctx,{"block":body_2},null).write("\">").reference(ctx.get("name"),ctx,"h").write("</option>");
@@ -65,36 +65,42 @@ function dump(obj) {
 	return js_beautify(jsDump.parse(obj), { indent_size: 2 });
 }
 
+function renderSelect(examples, defaultTemplate, id) {
+	dust.render("select", 
+		{
+	  	examples: examples,
+	  	selected: function(chk, ctx) {
+	    	if (ctx.current().name === defaultTemplate) return " selected ";
+	  	}
+		}, function(err, output) { $('#' + id).html(output); }
+	);
+}
+
 $(document).ready(function() {
   helpersTests.forEach(function(ex) {
-  	if (ex.error) {
-    	helpersTests.splice(helpersTests.indexOf(ex), 1);  
-  	} else {
-			dust.loadSource(dust.compile(ex.source, ex.name));
-  	}
+  	ex.tests.forEach(function(test) {
+  		if (test.error) {
+    		helpersTests.tests.splice(helpersTests.tests.indexOf(test), 1);  
+  		} else {
+				dust.loadSource(dust.compile(test.source, test.name));
+  		}
+  	});
 	});
-    
-  $('#tagline').empty().show().css({left: ($(window).width() * .02) + 165});
-	dust.loadSource(dust.compile(helpersTests[0].source, "intro"));
-	dust.stream("intro", helpersTests[0].context).on('data', function(data) {
-	  $('#tagline').append(data);
-	}).on('end', function() {
-	  $('#tagline').delay(500).fadeOut('slow');
-	});
+  
+  renderSelect(helpersTests, "replace", "select-helper")
 	
-	dust.render("select", {
-	  	examples: helpersTests,
-	  	selected: function(chk, ctx) {
-	    	if (ctx.current().name === "replace") return " selected ";
-	  	}
-	 	}, function(err, output) { $('#select').html(output);
-	});
+	$('#select-helper > select').change(function() {
+		var helperIdx = $(this).val();
+		renderSelect(helpersTests[helperIdx].tests, "replace", "select-test")
+ 
+		$('#select-test > select').change(function() {
+			var test = helpersTests[helperIdx].tests[$(this).val()];
 
-	$('#select > select').change(function() {
-		var idx = $(this).val();
-		$('#input-source').val(helpersTests[idx].source);
-		$('#input-context').val(dump(helpersTests[idx].context));
-		$('#input-source').change();
+			$('#input-source').val(test.source);
+			$('#input-context').val(dump(test.context));
+			$('#input-source').change();
+		});
+		$('#select-test > select').change();
 	});
 
 	$('#input-source').change(function() {
@@ -111,5 +117,5 @@ $(document).ready(function() {
 	});
 
 	$('#input-context').change(renderDemo);
-	$('#select > select').change();
+	$('#select-helper > select').change();
 });

@@ -1,6 +1,6 @@
 var uutest    = require('./uutest'),
     dust      = require('../lib/dust-helpers'),
-    tests     = require('./jasmine-test/spec/helpersTests'),
+    helpersTests     = require('./jasmine-test/spec/helpersTests'),
     coreSetup = require('./core').coreSetup;
 
 //Add the tapper helper to test the Tap helper.
@@ -19,24 +19,26 @@ function dumpError(err) {
   return out + err.stack;
 }
 
-var suite = new uutest.Suite({
-  pass: function() {
-    process.stdout.write(".");
-  },
-  fail: function(err) {
-    process.stdout.write("F");
-  },
-  done: function(passed, failed, elapsed) {
-    process.stdout.write("\n");
-    console.log(passed + " passed " + failed + " failed " + "(" + elapsed + "ms)");
-    this.errors.forEach(function(err) {
-      console.log(dumpError(err));
-    });
-  }
-});
+for (var i=0; i<helpersTests.length; i++) {
+  var suite = new uutest.Suite({
+    pass: function() {
+      process.stdout.write("");
+    },
+    fail: function(err) {
+      process.stdout.write("F");
+    },
+    done: function(passed, failed, elapsed) {
+      process.stdout.write("\n");
+      console.log(passed + " passed " + failed + " failed " + "(" + elapsed + "ms)");
+      this.errors.forEach(function(err) {
+        console.log(dumpError(err));
+      });
+    }
+  });
 
-global.dust = dust;
+  global.dust = dust;
 
-coreSetup(suite, tests);
+  coreSetup(suite, helpersTests[i].tests);
 
-suite.run();
+  suite.run();
+}
