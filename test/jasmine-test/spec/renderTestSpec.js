@@ -1,9 +1,11 @@
 describe ("Test the basic functionality of dust", function() {
   for (var index = 0; index < helpersTests.length; index++) {
-    var test = helpersTests[index];
-    it ("RENDER: " + test.message, render(test));
-    it ("STREAM: " + test.message, stream(test));
-    it ("PIPE: " + test.message, pipe(test));
+    for (var i = 0; i < helpersTests[index].tests.length; i++) {
+      var test = helpersTests[index].tests[i];
+      it ("RENDER: " + test.message, render(test));
+      it ("STREAM: " + test.message, stream(test));
+      it ("PIPE: " + test.message, pipe(test));
+    }
   };
 });
 
