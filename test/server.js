@@ -1,8 +1,9 @@
 var uutest    = require('./uutest'),
-    dust      = require('../lib/dust-helpers'),
+    dust = require('dustjs-linkedin'),
     helpersTests     = require('./jasmine-test/spec/helpersTests'),
     coreSetup = require('./core').coreSetup;
 
+require('../lib/dust-helpers');
 //Add the tapper helper to test the Tap helper.
 dust.helpers.tapper = function(chunk, context, bodies, params) {
   var result = dust.helpers.tap(params.value,chunk,context);
@@ -13,8 +14,8 @@ dust.helpers.tapper = function(chunk, context, bodies, params) {
 function dumpError(err) {
   var out = err.testName + " -> ";
   if (!err.message) {
-    err.message = JSON.stringify(err.expected)
-      + " " + err.operator + " " + JSON.stringify(err.actual);
+    err.message = JSON.stringify(err.expected) +
+    " " + err.operator + " " + JSON.stringify(err.actual);
   }
   return out + err.stack;
 }
