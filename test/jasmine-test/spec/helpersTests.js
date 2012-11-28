@@ -206,8 +206,8 @@ var helpersTests = [
          source:   '<div>{@math key="-2" method="multiply" operand="{y}"/}</div>',
          context:  { y: 4},
          expected: "<div>-8</div>",
-         message: "testing math/multiply helper with key as negative number and variable operand with quotes"
-       },
+         message:  "testing math/multiply helper with key as negative number and variable operand with quotes"
+      },
       {
         name:     "math helper add negative numbers",
         source:   '<div>{@math key="-16" method="add" operand="-4"/}</div>',
@@ -369,7 +369,6 @@ var helpersTests = [
         expected: "<div>17</div>",
         message: "testing math/ceil helper with two numbers"
       },
-      
       {
         name:     "math helper abs numbers with missing key",
         source:   '<div>{@math key="{key}" method="abs"/}</div>',
@@ -432,6 +431,34 @@ var helpersTests = [
         context:  {},
         expected: "<div></div>",
         message: "testing math with an empty body will show what is inside empty"
+      },
+      {
+        name:     "math helper simple round down with multiply, decimal key, and integer operand",
+        source:   '<div>{@math key="10.05" method="multiply" operand="200" round="true"/}</div>',
+        context:  {},
+        expected: "<div>2010</div>",
+        message:  "testing math/round down with multiply, decimal, and integer"
+      },
+      {
+        name:     "math helper don't round down with multiply, decimal key, and integer operand",
+        source:   '<div>{@math key="10.05" method="multiply" operand="200"/}</div>',
+        context:  {},
+        expected: "<div>2010.0000000000002</div>",
+        message:  "testing math/don't round down with multiply, decimal, and integer"
+      },
+      {
+        name:     "math helper simple round up with multiply, decimal key, and integer operand",
+        source:   '<div>{@math key="0.57" method="multiply" operand="200" round="true"/}</div>',
+        context:  {},
+        expected: "<div>114</div>",
+        message:  "testing math/round up with multiply, decimal, and integer"
+      },
+      {
+        name:     "math helper don't round up with multiply, decimal key, and integer operand",
+        source:   '<div>{@math key="0.57" method="multiply" operand="200"/}</div>',
+        context:  {},
+        expected: "<div>113.99999999999999</div>",
+        message:  "testing math/don't round up with multiply, decimal, and integer"
       }
     ]
   },
