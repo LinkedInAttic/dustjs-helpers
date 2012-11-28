@@ -370,6 +370,20 @@ var helpersTests = [
         message: "testing math/ceil helper with two numbers"
       },
       {
+        name:     "math helper round up numbers",
+        source:   '<div>{@math key="16.5" method="round"/}</div>',
+        context:  {},
+        expected: "<div>17</div>",
+        message:  "testing math/round helper rounding up with one number"
+      },
+      {
+        name:     "math helper round down numbers",
+        source:   '<div>{@math key="16.4" method="round"/}</div>',
+        context:  {},
+        expected: "<div>16</div>",
+        message:  "testing math/round helper rounding down with one number"
+      },
+      {
         name:     "math helper abs numbers with missing key",
         source:   '<div>{@math key="{key}" method="abs"/}</div>',
         context:  {},
