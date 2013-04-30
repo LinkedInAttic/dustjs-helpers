@@ -1033,7 +1033,7 @@ var helpersTests = [
           context:  { myboolean: true },
           expected: "you have 0 new messages",
           message: "should test if size helper is working properly with boolean true"
-      }, 
+      },
       {
         name:     "size helper with object",
         source:   'you have {@size key=myValue/} new messages',
@@ -1202,6 +1202,18 @@ var helpersTests = [
                   },
         expected: "3, 2, 1",
         message: "should sep helper in a async_iterator"
+      }
+    ]
+  },
+  {
+    name: "error",
+    tests: [
+      {
+        name:     "falsy data",
+        source:   '{#d}{@eq key=a value="bar"}equal{:else}bar{/eq}{/d}',
+        context:  {"d":[null]},
+        expected: "",
+        message: "should not crash if data is invalid"
       }
     ]
   }
