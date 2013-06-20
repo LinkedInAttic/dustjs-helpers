@@ -1189,7 +1189,7 @@ var helpersTests = [
       },
       {
         name:     "iterate helper ascending sort",
-        source:   '{@iterate key=obj sort=""}{$key}:{$value} {/iterate}',
+        source:   '{@iterate key=obj sort="asc"}{$key}:{$value} {/iterate}',
         context:  { obj: {c:"C", a:"A", b:"B" } },
         expected: "a:A b:B c:C ",
         message: "should test iterate helper ascending sort"
