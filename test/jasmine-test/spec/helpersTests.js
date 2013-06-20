@@ -1178,6 +1178,74 @@ var helpersTests = [
     ]
   },
   {
+    name: "iterate",
+    tests: [
+      {
+        name:     "iterate helper simple object iteration",
+        source:   '{@iterate key=obj}{$key}:{$value} {$type} {/iterate}',
+        context:  { obj: {a:"A", b:"B", c:"C" } },
+        expected: "a:A string b:B string c:C string ",
+        message: "should test iterate helper simple object case"
+      },
+      {
+        name:     "iterate helper ascending sort",
+        source:   '{@iterate key=obj sort=""}{$key}:{$value} {/iterate}',
+        context:  { obj: {c:"C", a:"A", b:"B" } },
+        expected: "a:A b:B c:C ",
+        message: "should test iterate helper ascending sort"
+      },
+      {
+        name:     "iterate helper descending sort",
+        source:   '{@iterate key=obj sort="desc"}{$key}:{$value} {/iterate}',
+        context:  { obj: {c:"C", a:"A", b:"B" } },
+        expected: "c:C b:B a:A ",
+        message: "should test iterate helper descending sort"
+      },
+      {
+        name:     "iterate helper user-supplied compare function for numeric sort",
+        source:   '{@iterate key=obj sort="compareNumber"}{$key}:{$value} {/iterate}',
+        context:  { obj: {10:"C", 1:"A", 300:"B" } },
+        expected: "1:A 10:C 300:B ",
+        message: "should test iterate helper with user compare function sort"
+      },
+      {
+        name:     "iterate helper pass array obj for key",
+        source:   '{@iterate key=arr}{$key}:{$value} {/iterate}',
+        context:  {arr: [1,2,3]},
+        expected: "0:1 1:2 2:3 ",
+        message: "should test iterate helper with array object for key"
+      },
+      {
+        name:     "iterate helper pass string obj for key",
+        source:   '{@iterate key=name}{$key}:{$value} {/iterate}',
+        context:  {name: "dust"},
+        expected: "0:d 1:u 2:s 3:t ",
+        message: "should test iterate helper with array object for key"
+      },
+      {
+        name:     "iterate helper no key param",
+        source:   '{@iterate foo=1}{$key}{/iterate}',
+        context:  {},
+        expected: "",
+        message: "should test iterate helper with no key. Error message to console"
+      },
+      {
+        name:     "iterate helper no body",
+        source:   '{@iterate key=1 bar=3/}',
+        context:  {},
+        expected: "",
+        message: "should test iterate helper with no body. Error message to console"
+      },
+      {
+        name:     "iterate helper type values",
+        source:   '{@iterate key=obj}{$key} {$type} {/iterate}',
+        context:  { obj: {a:"A", b:2, c:[1,2], d:{a:4}, e:true, f:null, g:undefined, h:function f(){}} },
+        expected: "a string b number c object d object e boolean f object g undefined h function ",
+        message: "should test iterate helper type values"
+      }
+    ]
+  },
+  {
     name: "sep",
     tests: [
       {
