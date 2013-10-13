@@ -8,8 +8,10 @@ exports.coreSetup = function(suite, auto) {
   });
 
   suite.test("base context", function() {
+    // Add compareNumbers function to global for later iterate helper test
     var base = dust.makeBase({
-      sayHello: function() { return "Hello!" }
+      sayHello: function() { return "Hello!" },
+      compareNumbers: function(a,b) {var aa= parseInt(a, 10); var bb = parseInt(b, 10);return aa-bb;}
     });
     testRender(this, "{sayHello} {foo}", base.push({foo: "bar"}), "Hello! bar");
   });
