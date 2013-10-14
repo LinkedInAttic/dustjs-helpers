@@ -14,6 +14,7 @@ var helpersTests = [
   {
     name: "if",
     tests: [
+
       {
         name:     "if helper with no body",
         source:   '{@if cond="{x}<{y}"/}',
@@ -57,6 +58,454 @@ var helpersTests = [
         message: "should test the if helper using $idx"
       }
     ]
+  },
+  {
+    name: "if with test param",
+    tests: [
+      {
+        name:     "if/test helper simple name",
+        source:   '{@if test="x"}3{/if}',
+        context:  { x:1},
+        expected: "3",
+        message: "should test if/test helper simple name"
+      },
+      {
+        name:     "if/test helper with path",
+        source:   '{@if test="a.b.c.d == 5"}5{/if}',
+        context:  { a: {b: {c:{d:5}}}},
+        expected: "5",
+        message: "should test if/test helper with path"
+      }, 
+      {
+        name:     "if/test helper with path in bracket",
+        source:   '{@if test="arr[nums[1]]==3"}3{/if}',
+        context:  { "arr": [ 1, 2, 3], nums:[1,2,3]},
+        expected: "3",
+        message: "should test if/test helper with bracket"
+      },
+      {
+        name:     "if/test helper with parenthesized expr in bracket",
+        source:   '{@if test="arr[(1&&0)]"}2{/if}',
+        context:  { "arr": [ 1, 2, 3]},
+        expected: "2",
+        message: "should test if/test helper with parenthesized expr in bracket"
+      },
+      {
+        name:     "if/test helper with path with expr in bracket",
+        source:   '{@if test="arr[1&&0]"}2{/if}',
+        context:  { "arr": [ 1, 2, 3]},
+        expected: "2",
+        message: "should test if/test helper with path with expr in bracket"
+      },
+      {
+        name:     "if/test helper with array with bracket in path",
+        source:   '{@if test="arr[0].biz==\'123\'"}123{/if}{$idx}',
+        context:  { "arr":  [ { "biz": "123" }, { "biz": "345" } ] },
+        expected: "123",
+        message: "should test if/test helper with array with bracket in path"
+      },
+      {
+        name:     "if/test helper with path with bracket",
+        source:   '{@if test="arr[1]==2"}2{/if}',
+        context:  { "arr": [ 1, 2, 3]},
+        expected: "2",
+        message: "should test if/test helper with path with bracket"
+      },
+      {
+        name:     "if/test helper with no body",
+        source:   '{@if test="{x}<{y}"/}',
+        context:  { x: 2, y: 3 },
+        expected: "",
+        message: "should test if/test helper with no body and fail gracefully"
+      },
+      {
+        name:     "if/test helper with else using the and condition",
+        source:   '{@if test="( {x} ) && ({x}==1)"}<div> X exists and is 1 </div>{:else}<div> x is not there </div>{/if}',
+        context:  { x : 1},
+        expected: "<div> X exists and is 1 </div>",
+        message: "should test if/test helper with else using the and condition"
+      },
+      {
+        name:     "if/test helper test all relational ops",
+        source:   '{@if test="2>1 && 3>=3 && 4==4 && 5!=6 && 8>7 && 9>=9 && 10>=9 && 9<=10"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper all relational ops"
+      },
+      {
+        name:     "if/test helper without else",
+        source:   '{@if test="{x}<{y}"}X < Y{/if}',
+        context:  { x: 2, y: 3 },
+        expected: "X < Y",
+        message: "should test without else"
+      },
+      {
+        name:     "if/test helper short-circuit and test ",
+        source:   '{@if test="x && x.y"}x.y worked?{:else}false expected{/if}',
+        context:  { },
+        expected: "false expected",
+        message: "should test short-circuit and test"
+      },
+      {
+        name:     "if/test helper short-circuit and test explicit undefined",
+        source:   '{@if test="x && x.y"}x.y worked?{:else}false expected{/if}',
+        context:  {x:undefined },
+        expected: "false expected",
+        message: "should test short-circuit and test explicit undefined"
+      },
+      {
+        name:     "if/test helper short-circuit or test",
+        source:   '{@if test="x || y"}true expected{:else}false wrong{/if}',
+        context:  {x: true },
+        expected: "true expected",
+        message: "should test short-circuit and test"
+      },
+      {
+        name:     "if/test helper short-circuit or test explicit undefined",
+        source:   '{@if test="x || y || z"}true expected{:else}false wrong{/if}',
+        context:  {x:undefined,  z:true },
+        expected: "true expected",
+        message: "should test short-circuit and test explicit undefined"
+      },
+      {
+        name:     "if/test helper without else using direct names",
+        source:   '{@if test="x<y"}<div> X < Y </div>{/if}',
+        context:  { x: 2, y: 3 },
+        expected: "<div> X < Y </div>",
+        message: "should test without else using direct names"
+      },
+      {
+        name:     "if/test helper with else block && operator",
+        source:   '{@if test=" \'{x}\' && \'{y}\' "}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/if}',
+        context:  {},
+        expected: "<div> X and Y does not exists </div>",
+        message: "should if/test test helper with else block && operator"
+      },
+      {
+        name:     "if/test helper with else block && operator and direct names",
+        source:   '{@if test=" x && y "}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/if}',
+        context:  {},
+        expected: "<div> X and Y does not exists </div>",
+        message: "should if/test test helper with else block && and direct names"
+      },
+      {
+        name:     "if/test helper with else using the or condition",
+        source:   '{@if test=" \'{x}\' || \'{y}\' "}<div> X or Y exists </div>{:else}<div> X or Y does not exists </div>{/if}',
+        context:  { x: 1},
+        expected: "<div> X or Y exists </div>",
+        message: "should test if/test helper with else using the or condition"
+      },
+      {
+      name:     "if/test helper with strings",
+      source:   '{@if test="\'abc\' == \'abc\'"}1{/if}',
+      context:  { },
+      expected: "1",
+      message: "should test if/test helper with strings"
+      },
+      {
+      name:     "if/test helper with strings NEQ",
+      source:   '{@if test="\'abc\' != \'abc\'"}1{:else}0{/if}',
+      context:  { },
+      expected: "0",
+      message: "should test if/test helper with strings NEQ"
+      },
+      {
+      name:     "if/test helper with use of just number",
+      source:   '{@if test=".25"}1{/if}',
+      context:  { },
+      expected: "1",
+      message: "should test if/test helper with use of just number"
+      },
+      {
+        name:     "if/test helper with hex operands",
+        source:   '{@if test="0xf < 0x10"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with hex operands"
+      },
+      {
+        name:     "if/test helper with negative operand",
+        source:   '{@if test="-5 < -4"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with negative operands"
+      },
+      {
+        name:     "if/test helper with float values",
+        source:   '{@if test=".5 < 0.6e+0"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with float operands"
+      },
+      {
+        name:     "if/test helper with other float values",
+        source:   '{@if test="5e1 < 6.0e+1"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with other float operands"
+      },
+      {
+        name:     "if/test helper with negative float values",
+        source:   '{@if test="-.5 < -0.6e+0"}true{:else}false{/if}',
+        context:  { },
+        expected: "false",
+        message: "should test if/test helper with negative float values"
+      },
+      {
+        name:     "if/test helper with use of .name",
+        source:   '{#arr}{@if test=".val == $idx"}{$idx}{/if}{/arr}',
+        context:  { arr: [{"val":0}, {"val":1}]},
+        expected: "01",
+        message: "should test if/test helper with .name"
+      },
+      {
+      name:     "if/test helper with use of . for current value",
+      source:   '{#arr}{@if test=". < 4"}1{/if}{/arr}',
+      context:  { arr: [1,2,3]},
+      expected: "111",
+      message: "should test if/test helper with . for current value"
+      },
+      {
+        name:     "if/test helper with array with bracket and dot name",
+        source:   '{#arr}{@if test=".[0]==$idx"}{$idx}{/if}{/arr}',
+        context:  { "arr": [ [0], [1]  ]},
+        expected: "01",
+        message: "should test if/test helper with path with bracket and dot name"
+      },
+      {
+        name:     "if/test helper with unary operator",
+        source:   '{@if test="!0"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with unary operator"
+      },
+      {
+        name:     "if/test helper test all relational ops",
+        source:   '{@if test="2>1 && 3>=3 && 4==4 && 5!=6 && 8>7 && 9>=9 && 10>=9 && 9<=10"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper all relational ops"
+      },
+      {
+        name:     "if/test helper test all relational ops using names",
+        source:   '{@if test="two>one && three>=three && four==four && five!=six && eight>seven && nine>=nine && ten>=nine && nine<=ten"}true{/if}',
+        context:  {"one":1, "two":2, "three":3, "four":4, "five":5, "six":6, "seven":7, "eight":8, "nine":9, "ten":10 },
+        expected: "true",
+        message: "should test if/test helper all relational ops"
+      },
+      {
+        name:     "if/test helper test all relational ops using paths",
+        source:   '{@if test="a.two>a.one && a.three>=a.three && a.four==a.four && a.five!=a.six && a.eight>a.seven && a.nine>=a.nine && a.ten>=a.nine && a.nine<=a.ten"}true{/if}',
+        context:  { a: {"one":1, "two":2, "three":3, "four":4, "five":5, "six":6, "seven":7, "eight":8, "nine":9, "ten":10 } },
+        expected: "true",
+        message: "should test if/test helper all relational ops"
+      },
+      {
+        name:     "if/test helper test NOT all relational ops and parens",
+        source:   '{@if test="!(2>1 && 3>=3 && 4==4 && 5!=6 && 8>7 && 9>=9 && 10>=9 && 9<=10)"}true{:else}false{/if}',
+        context:  { },
+        expected: "false",
+        message: "should test if/test helper NOT all relational ops and parens"
+      },
+      {
+        name:     "if/test helper with precedence",
+        source:   '{@if test="!0 && 5==5"}true{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper with precedence"
+      },
+      {
+        name:     "if/test helper adjacent operators OK ||",
+        source:   '{@if test="(((4)<2) || (1))"}true{:else}false{/if}',
+        context:  { },
+        expected: "true",
+        message: "should test if/test helper adjacent operators OK ||"
+      },
+      {
+        name:     "if/test helper adjacent operators OK &&",
+        source:   '{@if test="(((4)<2) && (1))"}true{:else}false{/if}',
+        context:  { },
+        expected: "false",
+        message: "should test if/test helper adjacent operators OK &&"
+      },
+      {
+        name:     "if/test helper with double unary",
+        source:   '{@if test="!!0"}true{:else}false{/if}',
+        context:  { },
+        expected: "false",
+        message: "should test if/test helper with double unary"
+      },
+      {
+        name:     "if/test helper with empty brackets err",
+        source:   '{@if test="arr[]"}true{:else}false{/if}',
+        context:  { arr: [1,2,3]},
+        expected: "",
+        message: "should test if/test helper with double unary"
+      },
+      {
+      name:     "if/test helper with empty parens - error case",
+      source:   '{@if test="()"}1{/if}',
+      context:  { },
+      expected: "",
+      message: "should test if/test helper with empty parens - error case"
+      },
+      {
+      name:     "if/test helper with invalid expression - error case",
+      source:   '{@if test="2[7]"}1{/if}',
+      context:  { },
+      expected: "",
+      message: "should test if/test helper with invalid expression - error case"
+      },
+      {
+        name:     "if/test helper using $idx",
+        source:   '{#list}{@if test="( {$idx} == 1 )"}<div>{y}</div>{/if}{/list}',
+        context:  { x : 1, list: [ { y: 'foo' }, { y: 'bar'} ]},
+        expected: "<div>bar</div>",
+        message: "should test the if/test helper using $idx"
+      },
+      {
+        name:     "if/test helper using direct $idx",
+        source:   '{#list}{@if test=" $idx == 1 "}<div>{y}</div>{/if}{/list}',
+        context:  { x : 1, list: [ { y: 'foo' }, { y: 'bar'} ]},
+        expected: "<div>bar</div>",
+        message: "should test the if/test helper using $idx"
+      },
+      {
+        name:     "if/test helper using direct $len",
+        source:   '{#list}{@if test=" $len == 2 "}2{/if}{/list}',
+        context:  { x : 1, list: [ { y: 'foo' }, { y: 'bar'} ]},
+        expected: "22",
+        message: "should test the if/test helper using $idx"
+      },
+      {
+        name:     "if/test helper with array with bad syntax",
+        source:   '{@if test="arr.[0]==\'123\'"}123{/if}{$idx}',
+        context:  { "arr":  [ [{ "biz": "123" }], [{ "biz": "345" }] ] },
+        expected: "",
+        message: "should test if/test helper with path with bracket in path"
+      },
+      {
+        name:     "if/test helper with consecutive operands",
+        source:   '{@if test="2 3"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with consecutive operands"
+      },
+      {
+        name:     "if/test helper with bad operator",
+        source:   '{@if test="2*3"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with bad operator"
+      },
+      {
+        name:     "if/test helper with unclosed string",
+        source:   '{@if test="\'abc"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with unclosed string"
+      },
+      {
+        name:     "if/test helper with unclosed string",
+        source:   '{@if test="\'abc"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with unclosed string"
+      },
+      {
+        name:     "if/test helper with invalid number - bad exponent",
+        source:   '{@if test="3.25D+27"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test  - bad exponent"
+      },
+      {
+        name:     "if/test helper with invalid number double dots",
+        source:   '{@if test="3..1"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test with invalid number double dots"
+      },
+      {
+      name:     "if/test helper with consecutive periods",
+      source:   '{@if test=".."}1{/if}',
+      context:  { },
+      expected: "",
+      message: "should test if/test helper with consecutive periods"
+      },
+      {
+        name:     "if/test helper with invalid number",
+        source:   '{@if test="3.25.8"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with invalid number extra dots"
+      },
+      {
+      name:     "if/test helper with use of a. - invalid name",
+      source:   '{@if test="a."}1{/if}',
+      context:  { },
+      expected: "",
+      message: "should test if/test helper with use of a. - invalid name"
+      },
+      {
+      name:     "if/test helper with use of a..b - invalid name",
+      source:   '{@if test="a..b"}1{/if}',
+      context:  { },
+      expected: "",
+      message: "should test if/test helper with use of a. - invalid name"
+      },
+      {
+        name:     "if/test helper with consecutive operators",
+        source:   '{@if test="==||"}true{:else}false{/if}',
+        context:  { },
+        expected: "",
+        message: "should test if/test helper with consecutive operators"
+      },
+      {
+        name:     "if helper with no body using tap",
+        source:   '{@if test="{x}<{y}"/}',
+        context:  { x: 2, y: 3 },
+        expected: "",
+        message: "should test if helper with no body using tap"
+      },
+      {
+        name:     "if helper without else using tap",
+        source:   '{@if test="{x}<{y}"}<div> X < Y </div>{/if}',
+        context:  { x: 2, y: 3 },
+        expected: "<div> X < Y </div>",
+        message: "should test if helper without else using tap"
+      },
+      {
+        name:     "if helper with else block using tap",
+        source:   '{@if test=" \'{x}\' && \'{y}\' "}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/if}',
+        context:  {},
+        expected: "<div> X and Y does not exists </div>",
+        message: "should test if helper with else block using tap"
+      },
+      {
+        name:     "if helper with else using the or condition using tap",
+        source:   '{@if test=" \'{x}\' || \'{y}\'"}<div> X or Y exists </div>{:else}<div> X or Y does not exists </div>{/if}',
+        context:  { x: 1},
+        expected: "<div> X or Y exists </div>",
+        message: "should test if helper with else using the or condition using tap"
+      },
+      {
+        name:     "if helper with else using the and conditon using tap",
+        source:   '{@if test="( \'{x}\') && ({x}<3)"}<div> X exists and is 1 </div>{:else}<div> x is not there </div>{/if}',
+        context:  { x : 1},
+        expected: "<div> X exists and is 1 </div>",
+        message: "should test if helper with else using the and conditon using tap"
+      },
+      {
+        name:     "if helper using $idx using tap",
+        source:   '{#list}{@if test="( {$idx} == 1 )"}<div>{y}</div>{/if}{/list}',
+        context:  { x : 1, list: [ { y: 'foo' }, { y: 'bar'} ]},
+        expected: "<div>bar</div>",
+        message: "should test the if helper using $idx using tap"
+      }
+
+    ]
+
   },
   {
     name: "math",
@@ -474,6 +923,8 @@ var helpersTests = [
         expected: "<div>113.99999999999999</div>",
         message:  "testing math/don't round up with multiply, decimal, and integer"
       }
+
+
     ]
   },
   {
