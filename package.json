@@ -1,6 +1,6 @@
 {
   "name": "dustjs-helpers",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "author": "Aleksander Williams",
   "description": "Helpers for dustjs-linkedin package",
   "contributors": [
@@ -46,7 +46,7 @@
   "devDependencies": {
     "jasmine-node"   :  "1.0.x",
     "cover"          :  "0.2.x",
-    "dustjs-linkedin":  "1.1.x"
+    "dustjs-linkedin":  "2.2.x"
   },
   "license": "MIT",
   "engine": {
