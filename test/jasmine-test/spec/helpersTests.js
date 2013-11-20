@@ -1204,6 +1204,89 @@ var helpersTests = [
         message: "should sep helper in a async_iterator"
       }
     ]
+  },
+  {
+    name: "addToContext",
+    tests: [{
+        name:     "test basic addToContext",
+        source:   '{@addToContext name="value"}{name}{/addToContext} {value}',
+        context:  { name: 'Rick Ross' },
+        expected: " Rick Ross",
+        message: "should test addToContext helper for basic support"
+    }, {
+        name:     "test basic addToContext2",
+        source:   'Before: {foo};{@addToContext name="foo"}bar{/addToContext}; After: {foo}',
+        context:  { },
+        expected: "Before: ;; After: bar",
+        message: "should test addToContext helper for basic support"
+    }, {
+        name:     "test basic addToContext with static string",
+        source:   '{@addToContext name="cardClass" }{?isHidden}is-hidden{:else}is-not-hidden{/isHidden}{/addToContext} {cardClass}',
+        context:  { isHidden: true },
+        expected: " is-hidden",
+        message: "should test addToContext helper for basic support with static string"
+    }, {
+        name:     "test boolean coercion in addToContext",
+        source:   '{@addToContext name="isHidden" type="boolean"}{boolean_as_string}{/addToContext} {^isHidden}Something isn\'t hidden{/isHidden}',
+        context:  { boolean_as_string: 'false' },
+        expected: " Something isn\'t hidden",
+        message: "should test addToContext helper for boolean coercion support"
+    }, {
+        name:     "test date coercion in addToContext",
+        source:   '{@addToContext name="value" type="date"}{date}{/addToContext} {value}',
+        context:  { date: 'not a real date.' },
+        expected: " Invalid Date",
+        message: "should test addToContext helper for date coercion support"
+    }, {
+        name:     "test string coercion in addToContext",
+        source:   '{@addToContext name="value" type="string"}{^bool}false{/bool}{/addToContext} {#value}the string \'false\' should pass as truthy, but, the boolean false will not{/value}',
+        //source: 'BASICS {bool}',
+        context:  { bool: false},
+        expected: " the string \'false\' should pass as truthy, but, the boolean false will not",
+        message: "should test addToContext helper for string coercion support"
+    }, {
+        name:     "test sibling addToContext support",
+        source:   '{@addToContext name="literal" type="number"}1{/addToContext} {@addToContext name="to_bool" type="boolean"}{literal}{/addToContext} {to_bool}',
+        context:  { },
+        expected: "  true",
+        message: "should test that sibling addToContexts have access to each others values"
+    }, {
+        name:     "test nested addToContext support",
+        source:   '{@addToContext name="bool" type="boolean"}{@addToContext name="num" type="number"}1{/addToContext}-{num}{/addToContext} {bool}',
+        context:  { },
+        expected: " true",
+        message: "should test that nested addToContext calls resolve correctly"
+    }, {
+        name:     "test basic addToContext for overriding existing properties",
+        source:   '{@addToContext name="value" type="boolean"}true{/addToContext} {value}',
+        context:  { value: 'this value already exists.'},
+        expected: " true",
+        message: "should test that addToContext will override a value on the context if it already exists."
+    }, {
+        name:     "test basic addToContext for overriding existing properties with empty content",
+        source:   '{@addToContext name="value"}{/addToContext} {value}',
+        context:  { value: 'this value already exists.'},
+        expected: " ",
+        message: "should test that addToContext will override a value on the context if it already exists even if it's empty."
+    }, {
+        name:     "test inline partials with addToContext",
+        source:   '{<inlinePartial}I am an inline partial!{/inlinePartial}{@addToContext name="value"}{+inlinePartial/}{/addToContext} The value is: {value}',
+        context:  { },
+        expected: " The value is: I am an inline partial!",
+        message: "should test that addToContext will add the output of an inline partial to the context."
+    }, {
+        name:     "test partials with addToContext",
+        source:   '{@addToContext name="value"}{>hello_there/}{/addToContext} The value is: {value}',
+        context:  { name: "Betsy Ross", count: 32 },
+        expected: " The value is: Hello Betsy Ross! You have 32 new messages.",
+        message: "should test that addToContext will add the output of a partial to the context."
+    }, {
+        name:     "test sections inside of addToContext",
+        source:   '{@addToContext name="value"}{#section}{name}{/section}{/addToContext} The value is: {value}',
+        context:  { section: { name: 'Bob Ross'} },
+        expected: " The value is: Bob Ross",
+        message: "should test that sections/setting new scope will still work with addToContext."
+    }]
   }
 ];
 
