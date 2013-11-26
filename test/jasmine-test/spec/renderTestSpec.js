@@ -2,12 +2,29 @@ describe ("Test the basic functionality of dust", function() {
   for (var index = 0; index < helpersTests.length; index++) {
     for (var i = 0; i < helpersTests[index].tests.length; i++) {
       var test = helpersTests[index].tests[i];
-      it ("RENDER: " + test.message, render(test));
-      it ("STREAM: " + test.message, stream(test));
-      it ("PIPE: " + test.message, pipe(test));
+
+      it ("RENDER: " + test.message, render(clone(test)));
+      it ("STREAM: " + test.message, stream(clone(test)));
+      it ("PIPE: " + test.message, pipe(clone(test)));
     }
   };
 });
+
+function clone(o) {
+  var c = {};
+  for (var prop in o) {
+    var val = o[prop],
+        type = Object.prototype.toString.call(val);
+    if (type === '[object Object]') {
+      c[prop] = clone(val);
+    }else if (type === '[object Array]') {
+      c[prop] = [].concat(val);
+    }else {
+      c[prop] = val;
+    }
+  }
+  return c;
+}
 
 function render(test) {
   return function() {
