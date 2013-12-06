@@ -15,11 +15,11 @@ function render(test) {
       dust.loadSource(dust.compile(test.source, test.name));
       dust.render(test.name, test.context, function(err, output) {
         expect(err).toBeNull();
-        expect(test.expected).toEqual(output);
+        expect(output).toEqual(test.expected);
       });
     }
     catch (error) {
-      expect(test.error || {} ).toEqual(error.message);
+      expect(error.message).toEqual(test.error || {} );
     }
   };
 }
@@ -54,9 +54,9 @@ function stream(test) {
     
     runs(function(){
       if (test.error) {
-        expect(test.error || {} ).toEqual(output);
+        expect(output).toEqual(test.error || {} );
       } else {
-        expect(test.expected).toEqual(output);
+        expect(output).toEqual(test.expected);
       }
     });
   }
@@ -94,9 +94,9 @@ function pipe(test) {
     
     runs(function(){
       if (test.error) {
-        expect(test.error || {} ).toEqual(output);
+        expect(output).toEqual(test.error || {});
       } else {
-        expect(test.expected).toEqual(output);
+        expect(output).toEqual(test.expected);
       }
     });
   }
