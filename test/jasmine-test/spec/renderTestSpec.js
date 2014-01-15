@@ -1,14 +1,4 @@
-describe ("Test the basic functionality of dust", function() {
-  for (var index = 0; index < helpersTests.length; index++) {
-    for (var i = 0; i < helpersTests[index].tests.length; i++) {
-      var test = helpersTests[index].tests[i];
-      it ("RENDER: " + test.message, render(test));
-      it ("STREAM: " + test.message, stream(test));
-      it ("PIPE: " + test.message, pipe(test));
-    }
-  };
-});
-
+/*global expect:true,runs:true,waitsFor:true,describe:true,it:true,helpersTests:true*/
 function render(test) {
   return function() {
     try {
@@ -60,7 +50,7 @@ function stream(test) {
       }
     });
   };
-};
+}
 
 function pipe(test) {
   return function() {
@@ -100,4 +90,15 @@ function pipe(test) {
       }
     });
   };
-};
+}
+
+describe ("Test the basic functionality of dust", function() {
+  for (var index = 0; index < helpersTests.length; index++) {
+    for (var i = 0; i < helpersTests[index].tests.length; i++) {
+      var test = helpersTests[index].tests[i];
+      it ("RENDER: " + test.message, render(test));
+      it ("STREAM: " + test.message, stream(test));
+      it ("PIPE: " + test.message, pipe(test));
+    }
+  }
+});

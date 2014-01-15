@@ -1208,7 +1208,7 @@ var helpersTests = [
 ];
 
 if (typeof module !== "undefined" && typeof require !== "undefined") {
-    module.exports = helpersTests; // We're on node.js
+  module.exports = helpersTests; // We're on node.js
 } else {
-    window.helpersTests = helpersTests; // We're on the browser
+  this['helpersTests'] = helpersTests; // We're on the browser
 }
