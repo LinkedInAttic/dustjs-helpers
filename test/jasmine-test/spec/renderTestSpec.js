@@ -59,7 +59,7 @@ function stream(test) {
         expect(output).toEqual(test.expected);
       }
     });
-  }
+  };
 };
 
 function pipe(test) {

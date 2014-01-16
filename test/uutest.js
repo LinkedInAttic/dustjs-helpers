@@ -17,7 +17,7 @@ Test.prototype.run = function() {
   } catch(err) {
     self.fail(err);
   }
-}
+};
 
 Test.prototype.equals = function(actual, expected, message) {
   if (actual !== expected) {
@@ -25,21 +25,21 @@ Test.prototype.equals = function(actual, expected, message) {
     if (message) err.message = message;
     throw wrapAssertionError(err, actual, expected, "===");
   }
-}
+};
 
 Test.prototype.ifError = function(err) {
   if (err) throw err;
-}
+};
 
 Test.prototype.pass = function() {
   clearTimeout(this.timer);
   this.callback();
-}
+};
 
 Test.prototype.fail = function(err) {
   clearTimeout(this.timer);
   this.callback(err);
-}
+};
 
 uutest.Test = Test;
 
@@ -62,7 +62,7 @@ Suite.prototype.test = function(name, fn) {
     self.pending--;
     self.check();
   }));
-}
+};
 
 Suite.prototype.run = function() {
   if (this.pending) return;
@@ -74,7 +74,7 @@ Suite.prototype.run = function() {
   for (var i=0; i<len; i++) {
     self.tests[i].run();
   }
-}
+};
 
 Suite.prototype.check = function() {
   if (this.pending) return;
@@ -82,14 +82,14 @@ Suite.prototype.check = function() {
       passed = len - this.errors.length,
       failed = len - passed;
   this.emit("done", passed, failed, new Date().getTime() - this.start);
-}
+};
 
 Suite.prototype.emit = function(type) {
   var event = this.options[type];
   if (event) {
     event.apply(this, Array.prototype.slice.call(arguments, 1));
   }
-}
+};
 
 uutest.Suite = Suite;
 
