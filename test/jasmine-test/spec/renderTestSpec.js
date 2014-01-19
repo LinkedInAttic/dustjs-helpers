@@ -47,11 +47,11 @@ function stream(test) {
         flag= true;
       }
     });
-    
+
     waitsFor(function(){
       return flag;
     }, "the output", 500);
-    
+
     runs(function(){
       if (test.error) {
         expect(output).toEqual(test.error || {} );
@@ -59,7 +59,7 @@ function stream(test) {
         expect(output).toEqual(test.expected);
       }
     });
-  }
+  };
 };
 
 function pipe(test) {
@@ -87,11 +87,11 @@ function pipe(test) {
         flag= true;
       }
     });
-    
+
     waitsFor(function(){
       return flag;
     }, "the output", 500);
-    
+
     runs(function(){
       if (test.error) {
         expect(output).toEqual(test.error || {});
@@ -99,5 +99,5 @@ function pipe(test) {
         expect(output).toEqual(test.expected);
       }
     });
-  }
+  };
 };

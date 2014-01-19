@@ -9,7 +9,7 @@ exports.coreSetup = function(suite, auto) {
 
   suite.test("base context", function() {
     var base = dust.makeBase({
-      sayHello: function() { return "Hello!" }
+      sayHello: function() { return "Hello!"; }
     });
     testRender(this, "{sayHello} {foo}", base.push({foo: "bar"}), "Hello! bar");
   });
@@ -78,7 +78,7 @@ exports.coreSetup = function(suite, auto) {
       end: function () {
         unit.pass();
       }
-    })
+    });
   });
 
   suite.test("tap (plain text string literal)", function() {
@@ -260,7 +260,7 @@ exports.coreSetup = function(suite, auto) {
       unit.pass();
     });
   });
-}
+};
 
 function testRender(unit, source, context, expected, error) {
   var name = unit.id;
