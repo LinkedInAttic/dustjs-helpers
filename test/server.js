@@ -1,14 +1,14 @@
 var uutest    = require('./uutest'),
-    dust      = require('../lib/dust-helpers'),
-    helpersTests     = require('./jasmine-test/spec/helpersTests'),
-    coreSetup = require('./core').coreSetup;
+  helpersTests     = require('./jasmine-test/spec/helpersTests'),
+  coreSetup = require('./core').coreSetup;
+
+dust  = require('../lib/dust-helpers');
 
 //Add the tapper helper to test the Tap helper.
-dust.helpers.tapper = function(chunk, context, bodies, params) {
-  var result = dust.helpers.tap(params.value,chunk,context);
-  chunk.write(result);
-  return chunk;
-};
+testUtils = require("./testUtils");
+for(key in testUtils) {
+  dust.helpers[key] = testUtils[key];
+}
 
 function dumpError(err) {
   var out = err.testName + " -> ";
