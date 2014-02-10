@@ -36,5 +36,19 @@ A quick tutorial for how to use Dust <https://github.com/linkedin/dustjs/wiki/Du
 
 * Go to github and post a pull request, see <https://help.github.com/articles/creating-a-pull-request>
 
+## Debugging
+To debug code in a browser run `grunt dev` task. It will generate jasmine spec runner and serve it on `http://localhost:3000/_SpecRunner.html` URL.
+Generated spec runner references unminified dust-helpers.js and dust-full.js files. This will allow you to easily step through the code and set up breakpoints.
+This task also watches changes to lib directory, so you can simply refresh the page to see the changes without a need to re-run `grunt dev` task. Press `Ctrl + C` to disconnect from server.
+
+## Using watch
+`grunt watch` will monitor dust-helpers.js and test spec files. Whenever change is made to those files, it will jshint them and run unit tests in Phantom (will not run them in node or rhino).
+ It is handy way to keep testing your changes without a need to manually run `grunt testPhantom` task.
+ Be sure to run `grunt test` before sending pull request. It will test your change in all environments and make sure that a travis build for your pull request succeeds.
+
+## Testing minified code in browser
+Use `grunt testClient` to test prod version code in any browser. Similarly to `grunt dev` task it will host spec runner on `http://localhost:3000/_SpecRunner.html` URL.
+
 ## Coverage report
-Running `grunt test` or `grunt testPhantom` generates coverage report under `tmp/coverage` folder. Open `index.html` file in a browser to view the coverage.
+Task `grunt coverage` runs jasmine unit tests against unminified source code and generates coverage report under `tmp/coverage` folder.
+Open `index.html` file in a browser to view the coverage.
