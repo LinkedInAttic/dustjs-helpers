@@ -1093,35 +1093,124 @@ var helpersTests = [
         source:   '{b}. {@tapper value=b/}',
         context:  { "b" : function() { return "beta"; } },
         expected: "beta. beta",
-        message: "should test if tap helper is working properly when it makes reference to a a string-valued {context function}"
+        message:  "should test if tap helper is working properly when it makes reference to a a string-valued {context function}"
       },
       {
         name:     "tap helper: string literal that includes an object-valued {context variable}",
         source:   'a.foo is {a.foo}. {@tapper value="a.foo is {a.foo}"/}',
         context:  { "a" : {"foo":"bar"} },
         expected: "a.foo is bar. a.foo is bar",
-        message: "should test if tap helper is working properly when the value is a string literal that includes an object-valued {context variable}"
+        message:  "should test if tap helper is working properly when the value is a string literal that includes an object-valued {context variable}"
       },
       {
         name:     "tap helper: reference to an object-valued {context variable}",
         source:   '{a.foo}. {@tapper value=a.foo/}',
         context:  { "a" : {"foo":"bar"} },
         expected: "bar. bar",
-        message: "should test if tap helper is working properly when it makes reference to an object-valued {context variable}"
+        message:  "should test if tap helper is working properly when it makes reference to an object-valued {context variable}"
       },
       {
         name:     "tap helper: string literal that calls a function within an object-valued {context variable}",
         source:   'a.foo is {a.foo}. {@tapper value="a.foo is {a.foo}"/}',
         context:  { "a" : {"foo" : function() { return "bar"; } } },
         expected: "a.foo is bar. a.foo is bar",
-        message: "should test if tap helper is working properly when the value is string literal that calls a function within an object-valued {context variable}"
+        message:  "should test if tap helper is working properly when the value is string literal that calls a function within an object-valued {context variable}"
       },
       {
         name:     "tap helper: reference to a function within an object-valued {context variable}",
         source:   '{a.foo} {@tapper value=a.foo/}',
         context:  { "a" : {"foo" : function() { return "bar"; } } },
         expected: "bar bar",
-        message: "should test if tap helper is working properly when it makes reference to a function within an object-valued {context variable}"
+        message:  "should test if tap helper is working properly when it makes reference to a function within an object-valued {context variable}"
+      },
+      {
+        name:     "tap on a function",
+        source:   '{#callTap val=foo}{/callTap}',
+        context:  {
+          callTap: function(chunk, context, bodies, params) {
+            return chunk.write(dust.helpers.tap(params.val, chunk, context));
+          },
+          foo: function() {
+            return 'foo';
+          }
+        },
+        expected: "foo",
+        message: "should call tap on a normal function and use it's return value to write to chunk"
+      },
+      {
+        name:     "tap literals",
+        source:   '{#callTap p1=valStr p2=valNum p3=valBool p4=valArray p5=valObj}{/callTap}',
+        context:  {
+          callTap: function(chunk, context, bodies, params) {
+            for (var i = 1; i < 6; i ++) {
+              if (params['p' + i]) {
+                chunk.write(dust.helpers.tap(params['p' + i], chunk, context));
+              }
+            }
+            return chunk;
+          },
+          valStr: "this is string literal",
+          valNum: 54321,
+          valBool: true,
+          valArray: [1,2,3,4,5],
+          valObj: { whoAmI: "I'm an object" }
+        },
+        expected: "this is string literal54321true1,2,3,4,5[object Object]",
+        message: "should call tap on literals and output them as is to chunk"
+      },
+      {
+        name:     "tap interpolated literals",
+        source:   '{#callTap p1="{valStr}" p2="{valNum}" p3="{valBool}" p4="{valArray}" p5="{valObj}"}{/callTap}',
+        context:  {
+          callTap: function(chunk, context, bodies, params) {
+            for (var i = 1; i < 6; i ++) {
+              if (params['p' + i]) {
+                chunk.write(dust.helpers.tap(params['p' + i], chunk, context));
+              }
+            }
+            return chunk;
+          },
+          valStr: "this is string literal",
+          valNum: 54321,
+          valBool: true,
+          valArray: [1,2,3,4,5],
+          valObj: { whoAmI: "I'm an object" }
+        },
+        expected: "this is string literal54321true1,2,3,4,5[object Object]",
+        message: "should call tap on interpolated literals and output them as is to chunk"
+      },
+      {
+        name:     "tap on a function that is using context and chunk",
+        source:   '{#callTap val=foo}{/callTap}',
+        context:  {
+          callTap: function(chunk, context, bodies, params) {
+            return chunk.write(dust.helpers.tap(params.val, chunk, context));
+          },
+          foo: function(chunk, context) {
+            return chunk.write(context.get('myVar'));
+          },
+          myVar: 'foo'
+        },
+        expected: "foo",
+        message: "testing tap on a normal function returning chunk"
+      },
+      {
+        name: "tap on a section param",
+        source: '{#foo p1="{baz}"}{#bar}{#callTap val=p1}{/callTap}{/bar}{/foo}',
+        context: {
+          baz : "baz",
+          foo :
+            {
+             bar :
+              {
+                callTap: function(chunk, context, bodies, params) {
+                  return chunk.write(dust.helpers.tap(params.val, chunk, context));
+                }
+              }
+            }
+        },
+        expected: "baz",
+        message: "testing tap on a dust body function"
       }
     ]
   },
