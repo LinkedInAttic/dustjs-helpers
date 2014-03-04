@@ -1,4 +1,6 @@
-var helpersTests = [
+(function(dust) {
+
+  var helpersTests = [
   {
     name: "replace",
     tests: [
@@ -1294,10 +1296,11 @@ var helpersTests = [
       }
     ]
   }
-];
+  ];
 
-if (typeof module !== "undefined" && typeof require !== "undefined") {
-  module.exports = helpersTests; // We're on node.js
-} else {
-  this['helpersTests'] = helpersTests; // We're on the browser
-}
+  if (typeof exports !== "undefined") {
+    module.exports = helpersTests; // We're on node.js
+  } else {
+    this['helpersTests'] = helpersTests; // We're on the browser
+  }
+})(typeof exports !== 'undefined' ? require('dustjs-linkedin') : dust);
