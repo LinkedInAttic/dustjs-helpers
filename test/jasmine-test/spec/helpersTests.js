@@ -1255,6 +1255,32 @@ var helpersTests = [
     ]
   },
   {
+    name: "templateName",
+    tests: [
+      {
+        name: "template name",
+        source: "{@templateName/}",
+        context: {},
+        expected: "template name",
+        message: "templateName simple test"
+      },
+      {
+        name: "Template name test dump to console",
+        source: "{@templateName output=\"console\"/}",
+        context: {},
+        expected: "",
+        message: "templateName simple test"
+      },
+      {
+        name: "Template name test dump inline",
+        source: "{@templateName output=\"inline\"/}",
+        context: {},
+        expected: "Template name test dump inline",
+        message: "templateName simple test"
+      }
+    ]
+  },
+  {
     name: "idx",
     tests: [
       {
