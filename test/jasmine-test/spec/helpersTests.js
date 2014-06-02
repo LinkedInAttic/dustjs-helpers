@@ -1263,6 +1263,20 @@ var helpersTests = [
         context:  { n: ["Mick", "Tom", "Bob"] },
         expected: "0>>Hello Mick! You have 30 new messages.1>>Hello Tom! You have 30 new messages.2>>Hello Bob! You have 30 new messages.",
         message: "should test idx helper within partial included in a array"
+      },
+      {
+        name:     "idx helper within partial included in a array (start param (=0) given)",
+        source:   '{#n}{@idx start="0"}{.}>>{/idx}{>hello_there name=. count="30"/}{/n}',
+        context:  { n: ["Mick", "Tom", "Bob"] },
+        expected: "0>>Hello Mick! You have 30 new messages.1>>Hello Tom! You have 30 new messages.2>>Hello Bob! You have 30 new messages.",
+        message: "should test idx helper within partial included in a array"
+      },
+      {
+        name:     "idx helper within partial included in a array (start param (=5) given)",
+        source:   '{#n}{@idx start="5"}{.}>>{/idx}{>hello_there name=. count="30"/}{/n}',
+        context:  { n: ["Mick", "Tom", "Bob"] },
+        expected: "5>>Hello Mick! You have 30 new messages.6>>Hello Tom! You have 30 new messages.7>>Hello Bob! You have 30 new messages.",
+        message: "should test idx helper within partial included in a array"
       }
     ]
   },
