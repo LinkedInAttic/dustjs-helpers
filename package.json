@@ -55,7 +55,7 @@
     "helpers"
   ],
   "dependencies": {
-    "dustjs-linkedin": "~2.3.0"
+    "dustjs-linkedin": "~2.4.0"
   },
   "devDependencies": {
     "jasmine-node": "~1.13.0",
