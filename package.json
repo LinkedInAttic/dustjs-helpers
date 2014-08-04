@@ -54,7 +54,7 @@
     "views",
     "helpers"
   ],
-  "dependencies": {
+  "peerDependencies": {
     "dustjs-linkedin": "~2.4.0"
   },
   "devDependencies": {
