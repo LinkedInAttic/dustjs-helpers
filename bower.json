@@ -4,7 +4,11 @@
   "main": "./lib/dust-helpers",
   "ignore": [
     ".jshintrc",
-    "**/*.txt"
+    "**/*.txt",
+    ".travis.yml",
+    "package.json",
+    "test",
+    "archive"
   ],
   "homepage": "https://github.com/linkedin/dustjs-helpers",
   "description": "Helpers for dustjs-linkedin package",
