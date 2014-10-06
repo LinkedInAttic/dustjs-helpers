@@ -1253,6 +1253,13 @@
           context:  { "aa": ["a"], "p" : 42},
           expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk, ctx) {return chk.reference(ctx.get([\\\"p\\\"], false), ctx, \\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
           message: "contextDump function dump test"
+      },
+      {
+          name:     "contextDump encoding test",
+          source:   "{@contextDump/}",
+          context:  { "A": "<html>", "B": "</html>"},
+          expected: "{\n  \"A\": \"\\u003chtml>\",\n  \"B\": \"\\u003c/html>\"\n}",
+          message: "contextDump simple test"
       }
     ]
   },
