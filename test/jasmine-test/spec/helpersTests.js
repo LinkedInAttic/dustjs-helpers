@@ -24,6 +24,13 @@
         message: "should test if helper with no body and fail gracefully"
       },
       {
+        name:     "if helper with no condition",
+        source:   '{@if}Hello{/if}',
+        context:  { x: 2, y: 3 },
+        expected: "",
+        message: "should test if helper with no condition fails gracefully"
+      },
+      {
         name:     "if helper without else",
         source:   '{@if cond="{x}<{y}"}<div> X < Y </div>{/if}',
         context:  { x: 2, y: 3 },
@@ -489,6 +496,13 @@
         message: "eq helper with no body silently fails with console log"
       },
       {
+        name:     "eq helper with no params",
+        source:   "{@eq}Hello{/eq}",
+        context:  {},
+        expected: "",
+        message: "eq helper with no params does not execute"
+      },
+      {
         name:     "eq helper matching string case",
         source:   "{@eq key=\"foo\" value=\"foo\"}equal{/eq}",
         context:  {},
@@ -562,6 +576,13 @@
         message: "ne helper with no body silently fails with console log"
       },
       {
+        name:     "ne helper with no params",
+        source:   "{@ne}Hello{/ne}",
+        context:  {},
+        expected: "",
+        message: "ne helper with no params does not execute"
+      },
+      {
         name:     "ne helper matching string case",
         source:   "{@ne key=\"foo\" value=\"foo\"}not equal{/ne}",
         context:  {},
@@ -621,6 +642,13 @@
         context:  {},
         expected: "",
         message: "lt helper with no body silently fails with console log"
+      },
+      {
+        name:     "lt helper with no params",
+        source:   "{@lt}Hello{/lt}",
+        context:  {},
+        expected: "",
+        message: "lt helper with no params does not execute"
       },
       {
         name:     "lt helper defaults to type number",
@@ -689,6 +717,27 @@
         context:  {},
         expected: "22 not greater than 3 with type string",
         message: "gt helper with type string not valid case"
+      },
+      {
+        name:     "gt helper with no params",
+        source:   "{@gt}Hello{/gt}",
+        context:  {},
+        expected: "",
+        message: "gt helper with no params does not execute"
+      },
+      {
+        name:     "lte helper with no params",
+        source:   "{@lte}Hello{/lte}",
+        context:  {},
+        expected: "",
+        message: "lte helper with no params does not execute"
+      },
+      {
+        name:     "gte helper with no params",
+        source:   "{@gte}Hello{/gte}",
+        context:  {},
+        expected: "",
+        message: "gte helper with no params does not execute"
       },
       {
         name:     "lte helper with no body",
@@ -1260,6 +1309,13 @@
     name: "idx",
     tests: [
       {
+        name:     "idx helper with no body",
+        source:   '{#n}{@idx/}{.} {/n}',
+        context:  { n: ["Mick", "Tom", "Bob"] },
+        expected: "Mick Tom Bob ",
+        message: "idx helper with no body should not render"
+      },
+      {
         name:     "idx helper within partial included in a array",
         source:   '{#n}{@idx}{.}>>{/idx}{>hello_there name=. count="30"/}{/n}',
         context:  { n: ["Mick", "Tom", "Bob"] },
@@ -1271,6 +1327,13 @@
   {
     name: "sep",
     tests: [
+      {
+        name:     "sep helper with no body",
+        source:   '{#n}{.} {@sep/}{/n}',
+        context:  { n: ["Mick", "Tom", "Bob"] },
+        expected: "Mick Tom Bob ",
+        message: "sep helper with no body should not render"
+      },
       {
         name:     "sep helper within partial included in a array",
         source:   '{#n}{>hello_there name=. count="30"/}{@sep} {/sep}{/n}',
