@@ -55,7 +55,7 @@
     "helpers"
   ],
   "peerDependencies": {
-    "dustjs-linkedin": "~2.4.0"
+    "dustjs-linkedin": ">= 2.4.0 < 3"
   },
   "devDependencies": {
     "dustjs-linkedin": "~2.4.0",
