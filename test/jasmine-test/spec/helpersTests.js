@@ -1035,7 +1035,7 @@
           context:  { myboolean: true },
           expected: "you have 0 new messages",
           message: "should test if size helper is working properly with boolean true"
-      }, 
+      },
       {
         name:     "size helper with object",
         source:   'you have {@size key=myValue/} new messages',
@@ -1246,13 +1246,6 @@
           context:  { aa: { "A": 2, "B": 3} },
           expected: "{\n  \"isObject\": true,\n  \"head\": {\n    \"aa\": {\n      \"A\": 2,\n      \"B\": 3\n    }\n  }\n}",
           message: "contextDump full test"
-      },
-      {
-          name:     "contextDump function dump test",
-          source:   "{#aa param=\"{p}\"}{@contextDump key=\"full\"/}{/aa}",
-          context:  { "aa": ["a"], "p" : 42},
-          expected: "{\n  \"tail\": {\n    \"tail\": {\n      \"isObject\": true,\n      \"head\": {\n        \"aa\": [\n          \"a\"\n        ],\n        \"p\": 42\n      }\n    },\n    \"isObject\": true,\n    \"head\": {\n      \"param\": \"function body_2(chk, ctx) {return chk.reference(ctx.get([\\\"p\\\"], false), ctx, \\\"h\\\");}\",\n      \"$len\": 1,\n      \"$idx\": 0\n    }\n  },\n  \"isObject\": false,\n  \"head\": \"a\",\n  \"index\": 0,\n  \"of\": 1\n}",
-          message: "contextDump function dump test"
       },
       {
           name:     "contextDump encoding test",
