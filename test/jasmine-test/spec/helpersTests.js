@@ -763,6 +763,81 @@
     ]
   },
   {
+    name: "or",
+    tests: [
+      {
+        name:     "or helper 2 true conditions and whitespace",
+        source:   "{@or} {@eq key=a value=2 /} {@eq key=c value=3 /} {:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper detects a true condition when at least one true and whitespace"
+      },
+      {
+        name:     "or helper 2 true conditions and no whitespace",
+        source:   "{@or}{@eq key=a value=2 /} @eq key=c value=3 /}{:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper detects a true condition when  at least one true and no whitespace"
+      },
+      {
+        name:     "or helper 1 true conditions and 1 false",
+        source:   "{@or} {@eq key=a value=2 /} {@eq key=c value=7 /} {:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper detects a true condition when a true and false also exists"
+      },
+      {
+        name:     "or helper 1 false conditions and 1 true",
+        source:   "{@or} {@eq key=a value=7 /} {@eq key=c value=3 /} {:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper detects a true condition when a false also and then true"
+      },
+      {
+        name:     "or helper no true conditions",
+        source:   "{@or} {@eq key=a value=7 /} {@eq key=c value=9 /} {:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "",
+        message: "or helper detects skips true  when all false"
+      },
+      {
+        name:     "or helper no conditions",
+        source:   "{@or} {:true}true{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "",
+        message: "or helper skips true when no conditions"
+      },
+      {
+        name:     "or helper 2 true conditions and false block",
+        source:   "{@or}{@eq key=a value=2 /}{@eq key=c value=3 /}{:true}true{:false}false{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper detects a true condition and skips false"
+      },
+      {
+        name:     "or helper no true conditions and false block",
+        source:   "{@or} {@eq key=a value=0 /} {@eq key=c value=9 /} {:true}true{:false}false{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "false",
+        message: "or helper detects a false condition and emits false"
+      },
+      {
+        name:     "or helper multiple true conditions",
+        source:   "{@or} {@eq key=a value=2 /}{@ne key=c value=9 /}{@gt key=a value=1/}{@lt key=a value=5/}{:true}true{:false}false{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper multiple different ops all true"
+      },
+      {
+        name:     "or helper multiple conditions ,1 true",
+        source:   "{@or} {@eq key=a value=3 /}{@ne key=c value=3 /}{@gt key=a value=2/}{@lt key=a value=5/}{:true}true{:false}false{/or}",
+        context:  {a:2, b:2, c:3},
+        expected: "true",
+        message: "or helper multiple different ops last true"
+      }
+    ]
+  },
+  {
     name: "select",
     tests: [
       {
