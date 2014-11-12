@@ -1358,6 +1358,53 @@
         message: "should sep helper in a async_iterator"
       }
     ]
+  },
+  {
+    name: "megaif",
+    tests: [
+      {
+        name:     "megaif helper with no body",
+        source:   '{@megaif cond="{0}<{1}" p0=x p1=y/}',
+        context:  { x: 2, y: 3 },
+        expected: "",
+        message: "should test megaif helper with no body and fail gracefully"
+      },
+      {
+        name:     "megaif helper with no condition",
+        source:   '{@megaif}Hello{/megaif}',
+        context:  { x: 2, y: 3 },
+        expected: "",
+        message: "should test megaif helper with no condition fails gracefully"
+      },
+      {
+        name:     "megaif helper without else",
+        source:   '{@megaif cond="{0}<{1}" p0=x p1=y}<div> X < Y </div>{/megaif}',
+        context:  { x: 2, y: 3 },
+        expected: "<div> X < Y </div>",
+        message: "should test megaif helper without else"
+      },
+      {
+        name:     "megaif helper with else block",
+        source:   '{@megaif cond=" {0}.length && {1}.length " p0=x p1=y}<div> X and Y exists </div>{:else}<div> X and Y does not exists </div>{/megaif}',
+        context:  { x: '', y: '' },
+        expected: "<div> X and Y does not exists </div>",
+        message: "should test megaif helper with else block"
+      },
+      {
+        name:     "megaif helper with else using the or condition",
+        source:   '{@megaif cond=" {0}.length || {1}.length " p0=x p1=y}<div> X or Y exists </div>{:else}<div> X or Y does not exists </div>{/megaif}',
+        context:  { x: '1', y: '' },
+        expected: "<div> X or Y exists </div>",
+        message: "should test megaif helper with else using the or condition"
+      },
+      {
+        name:     "megaif helper with else using the and conditon",
+        source:   '{@megaif cond="( {0}.toString().length ) && ({0}<3)"  p0=x}<div> X exists and is 1 </div>{:else}<div> x is not there </div>{/megaif}',
+        context:  { x : 1},
+        expected: "<div> X exists and is 1 </div>",
+        message: "should test megaif helper with else usingt he and conditon"
+      }
+    ]
   }
   ];
 
