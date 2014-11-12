@@ -1346,7 +1346,7 @@
     ]
   },
   {
-    name: "sep",
+    name: "sep / first / last",
     tests: [
       {
         name:     "sep helper with no body",
@@ -1377,6 +1377,27 @@
                   },
         expected: "3, 2, 1",
         message: "should sep helper in a async_iterator"
+      },
+      {
+        name:     "first helper",
+        source:   "{#guests}{@first}Hello {/first}{.} {/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice Bob Charlie ",
+        message:  "first helper should output on the first iteration only"
+      },
+      {
+        name:     "last helper",
+        source:   "Hello {#guests}{@last}and {/last}{.} {/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice Bob and Charlie ",
+        message:  "last helper should output on the last iteration only"
+      },
+      {
+        name:     "first / last / sep combo",
+        source:   "{#guests}{@first}Hello {/first}{@last}and {/last}{.}{@last}!{/last}{@sep}, {/sep}{/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice, Bob, and Charlie!",
+        message:  "first, last, and sep helpers should operate together"
       }
     ]
   }
