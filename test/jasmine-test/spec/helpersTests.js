@@ -497,10 +497,24 @@
       },
       {
         name:     "eq helper with no params",
-        source:   "{@eq}Hello{/eq}",
+        source:   "{@eq}Hello{:else}Goodbye{/eq}",
         context:  {},
         expected: "",
         message: "eq helper with no params does not execute"
+      },
+      {
+        name:     "eq helper with key that resolves to undefined",
+        source:   "{@eq key=foo value=\"0\"}Hello{:else}Goodbye{/eq}",
+        context:  {},
+        expected: "Goodbye",
+        message:  "eq helper with key that resolves to undefined uses that as comparison"
+      },
+      {
+        name:     "eq helper with both key and value undefined",
+        source:   "{@eq key=foo value=bar}Hello{:else}Goodbye{/eq}",
+        context:  {},
+        expected: "Hello",
+        message:  "eq helper with key and value that both resolve to undefined is true"
       },
       {
         name:     "eq helper matching string case",
