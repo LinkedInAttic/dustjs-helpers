@@ -552,6 +552,13 @@
          message: "eq helper non equal boolean case"
       },
       {
+         name:     "eq helper coerce falsy case",
+         source:   "{@eq key=x value=\"0\" type=\"string\"}equal{/eq}",
+         context:  {x:0},
+         expected: "equal",
+         message: "eq helper should coerce falsy booleans"
+      },
+      {
         name:     "eq helper without a body",
         source:   "{@eq key=\"abc\" value=\"java\"/}",
         context:  {},
