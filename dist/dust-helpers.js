@@ -1,10 +1,21 @@
-/*! dustjs-helpers - v1.4.0
+/*! dustjs-helpers - v1.5.0
 * https://github.com/linkedin/dustjs-helpers
 * Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
 (function(dust){
 
-//using the built in logging method of dust when accessible
-var _log = dust.log ? function(mssg) { dust.log(mssg, "INFO"); } : function() {};
+// Use dust's built-in logging when available
+var _log = dust.log ? function(msg, level) {
+  level = level || "INFO";
+  dust.log(msg, level);
+} : function() {};
+
+var _deprecatedCache = {};
+function _deprecated(target) {
+  if(_deprecatedCache[target]) { return; }
+  _log("Deprecation warning: " + target + " is deprecated and will be removed in a future version of dustjs-helpers", "WARN");
+  _log("For help and a deprecation timeline, see https://github.com/linkedin/dustjs-helpers/wiki/Deprecated-Features#" + target.replace(/\W+/g, ""), "WARN");
+  _deprecatedCache[target] = true;
+}
 
 function isSelect(context) {
   var value = context.current();
@@ -36,18 +47,17 @@ function filter(chunk, context, bodies, params, filterOp) {
       actualKey,
       expectedValue,
       filterOpType = params.filterOpType || '';
+
   // when @eq, @lt etc are used as standalone helpers, key is required and hence check for defined
-  if ( typeof params.key !== "undefined") {
+  if (params.hasOwnProperty("key")) {
     actualKey = dust.helpers.tap(params.key, chunk, context);
-  }
-  else if (isSelect(context)) {
+  } else if (isSelect(context)) {
     actualKey = context.current().selectKey;
     //  supports only one of the blocks in the select to be selected
     if (context.current().isResolved) {
       filterOp = function() { return false; };
     }
-  }
-  else {
+  } else {
     _log("No key specified for filter in:" + filterOpType + " helper ");
     return chunk;
   }
@@ -60,27 +70,24 @@ function filter(chunk, context, bodies, params, filterOp) {
     // we want helpers without bodies to fail gracefully so check it first
     if(body) {
      return chunk.render(body, context);
-    }
-    else {
-      _log("No key specified for filter in:" + filterOpType + " helper ");
+    } else {
+      _log("No body specified for " + filterOpType + " helper ");
       return chunk;
     }
-   }
-   else if (bodies['else']) {
+  } else if (bodies['else']) {
     return chunk.render(bodies['else'], context);
   }
   return chunk;
 }
 
-function coerce (value, type, context) {
-  if (value) {
-    switch (type || typeof(value)) {
+function coerce(value, type, context) {
+  if (typeof value !== "undefined") {
+    switch (type || typeof value) {
       case 'number': return +value;
       case 'string': return String(value);
-      case 'boolean': {
+      case 'boolean':
         value = (value === 'false' ? false : value);
         return Boolean(value);
-      }
       case 'date': return new Date(value);
       case 'context': return context.get(value);
     }
@@ -143,22 +150,23 @@ var helpers = {
     if (context.stack.index === context.stack.of - 1) {
       return chunk;
     }
-    if(body) {
-     return bodies.block(chunk, context);
-    }
-    else {
-     return chunk;
+    if (body) {
+      return body(chunk, context);
+    } else {
+      return chunk;
     }
   },
 
   "idx": function(chunk, context, bodies) {
     var body = bodies.block;
-     if(body) {
-       return bodies.block(chunk, context.push(context.stack.index));
-     }
-     else {
-       return chunk;
-     }
+    // Will be removed in 1.6
+    _deprecated("{@idx}");
+    if(body) {
+      return body(chunk, context.push(context.stack.index));
+    }
+    else {
+      return chunk;
+    }
   },
 
   /**
@@ -208,12 +216,16 @@ var helpers = {
     cond argument should evaluate to a valid javascript expression
    **/
 
-  "if": function( chunk, context, bodies, params ){
+  "if": function( chunk, context, bodies, params ) {
     var body = bodies.block,
-        skip = bodies['else'];
-    if( params && params.cond){
-      var cond = params.cond;
-      cond = dust.helpers.tap(cond, chunk, context);
+        skip = bodies['else'],
+        cond;
+
+    if(params && params.cond) {
+      // Will be removed in 1.6
+      _deprecated("{@if}");
+
+      cond = dust.helpers.tap(params.cond, chunk, context);
       // eval expressions with given dust references
       if(eval(cond)){
        if(body) {
