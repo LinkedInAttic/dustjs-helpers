@@ -1379,6 +1379,18 @@
         message: "should sep helper in a async_iterator"
       }
     ]
+  },
+  {
+    name: "error",
+    tests: [
+      {
+        name:     "falsy data",
+        source:   '{#d}{@eq key=a value="bar"}equal{:else}bar{/eq}{/d}',
+        context:  {"d":[null]},
+        expected: "",
+        message: "should not crash if data is invalid"
+      }
+    ]
   }
   ];
 
