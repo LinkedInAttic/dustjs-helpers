@@ -10,6 +10,8 @@
   }
 }(this, function(dust, helpersTests) {
 
+  dust.debugLevel = "DEBUG";
+
   function render(test) {
   return function() {
     try {

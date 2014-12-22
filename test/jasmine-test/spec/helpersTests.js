@@ -1016,6 +1016,110 @@
         context:  { "skills" : [ "java", "js" , "unknown"] },
         expected: "JAVA,JS,UNKNOWN",
         message: "should test select helper inside a array with {.}"
+      },
+      {
+        name: "select helper doesn't destroy current context",
+        source: '{#test}{@select key=foo}{@eq value="{.bar_ref}"}{.name}{/eq}{/select}{/test}',
+        context: {
+          "name": "Wrong",
+          "bar_ref": "Wrong",
+          "test": {
+            "foo": "bar",
+            "bar_ref": "bar",
+            "name": "Right"
+          }
+        },
+        expected: "Right",
+        message: "should test that the current context is still accessible within the select"
+      }
+    ]
+  },
+  {
+    name: "any",
+    tests: [
+      {
+        name: "any without select",
+        source: '{@any}Hello{/any}',
+        context: { any: 'abc'},
+        expected: "",
+        message: "any helper outside of select does not render"
+      },
+      {
+        name: "any in select with no cases",
+        source: '{@select key=foo}{@any}Hello{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "",
+        message: "any helper with no cases in the select does not render"
+      },
+      {
+        name: "any in select with no true cases",
+        source: '{@select key=foo}{@eq value=1/}{@any}Hello{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "",
+        message: "any helper with no true cases in the select does not render"
+      },
+      {
+        name: "any in select with one true case",
+        source: '{@select key=foo}{@eq value="bar"/}{@any}Hello{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello",
+        message: "any helper with a true case in the select renders"
+      },
+      {
+        name: "any in select with multiple cases, one true",
+        source: '{@select key=foo}{@eq value="no"/}{@eq value="bar"/}{@any}Hello{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello",
+        message: "any helper with at least one true case in the select renders"
+      },
+      {
+        name: "any in select with true case that has a body",
+        source: '{@select key=foo}{@eq value="bar"}World {/eq}{@any}Hello{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "World Hello",
+        message: "any helper in select renders along with the true case's body"
+      },
+      {
+        name: "any in select that comes before the true case",
+        source: '{@select key=foo}{@any}Hello{/any}{@eq value="bar"} World{/eq}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello World",
+        message: "any helper that comes before the true case still renders"
+      },
+      {
+        name: "multiple any helpers",
+        source: '{@select key=foo}{@any}Hello{/any}{@eq value="bar"/}{@any} World{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello World",
+        message: "multiple any helpers in the same select all render"
+      },
+      {
+        name: "multiple nested any helpers, false case",
+        source: '{@select key=foo}{@any}Hello{/any}{@eq value="bar"}{@select key=moo}{@eq value="cow"/}{@any} Cow{/any}{/select}{/eq}{@any} World{/any}{/select}',
+        context: { foo: "bar", moo: "shoo"},
+        expected: "Hello World",
+        message: "multiple any helpers in nested selects work correctly if their select has no true test"
+      },
+      {
+        name: "multiple nested any helpers, true case",
+        source: '{@select key=foo}{@any}Hello{/any}{@eq value="bar"}{@select key=moo}{@eq value="cow"/}{@any} Cow{/any}{/select}{/eq}{@any} World{/any}{/select}',
+        context: { foo: "bar", moo: "cow"},
+        expected: "Hello Cow World",
+        message: "multiple any helpers in nested selects render if each select has a true test"
+      },
+      {
+        name: "any nested in an any, it's anyception",
+        source: '{@select key=foo}{@eq value="bar"/}{@any}Hello{@any} World{/any}{/any}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello",
+        message: "an any helper cannot be nested inside an any helper without a select"
+      },
+      {
+        name: "any nested in an any properly with its own select",
+        source: '{@select key=foo}{@eq value="bar"/}{@any}Hello{@select key=moo}{@eq value="cow"/}{@any} World{/any}{/select}{/any}{/select}',
+        context: { foo: "bar", moo: "cow"},
+        expected: "Hello World",
+        message: "an any helper must have its own select to render"
       }
     ]
   },
