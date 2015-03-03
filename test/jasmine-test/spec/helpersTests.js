@@ -972,10 +972,9 @@
         expected: "foobar",
         message: "should test select helper with variable and type string in a nested objects"
       },
-
       {
-        name:     "select helper with missing key in the context and hence no output",
-        source:   ["{#b}{@select key=y}",
+        name:     "select helper with missing key parameter and hence no output",
+        source:   ["{#b}{@select}",
                    " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
                    " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
                    " {@default}foofoo{/default}",
@@ -983,6 +982,17 @@
         context:  { b : { z: "foo", x: "bar" } },
         expected: "",
         message: "should test select helper with missing key in the context and hence no output"
+      },
+      {
+        name:     "select helper with key not defined in the context",
+        source:   ["{#b}{@select key=y}",
+                   " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
+                   " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
+                   " {@default}foofoo{/default}",
+                   "{/select}{/b}"].join("\n"),
+        context:  { b : { z: "foo", x: "bar" } },
+        expected: "foofoo",
+        message: "should test select helper with undefined key in the context"
       },
       {
         name:     "select helper wih key matching the default condition",
