@@ -918,10 +918,9 @@
         expected: "foobar",
         message: "should test select helper with variable and type string in a nested objects"
       },
-
       {
-        name:     "select helper with missing key in the context and hence no output",
-        source:   ["{#b}{@select key=y}",
+        name:     "select helper with missing key parameter and hence no output",
+        source:   ["{#b}{@select}",
                    " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
                    " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
                    " {@default}foofoo{/default}",
@@ -929,6 +928,17 @@
         context:  { b : { z: "foo", x: "bar" } },
         expected: "",
         message: "should test select helper with missing key in the context and hence no output"
+      },
+      {
+        name:     "select helper with key not defined in the context",
+        source:   ["{#b}{@select key=y}",
+                   " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
+                   " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
+                   " {@default}foofoo{/default}",
+                   "{/select}{/b}"].join("\n"),
+        context:  { b : { z: "foo", x: "bar" } },
+        expected: "foofoo",
+        message: "should test select helper with undefined key in the context"
       },
       {
         name:     "select helper wih key matching the default condition",
@@ -1067,6 +1077,54 @@
         expected: "Hello World",
         message: "an any helper must have its own select to render"
       }
+    ]
+  },
+  {
+    name: "none",
+    tests: [
+      {
+        name: "none without select",
+        source: '{@none}Hello{/none}',
+        context: { none: 'abc'},
+        expected: "",
+        message: "none helper outside of select does not render"
+      },
+      {
+        name: "none in select with no cases",
+        source: '{@select key=foo}{@none}Hello{/none}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello",
+        message: "none helper with no cases in the select renders"
+      },
+      {
+        name: "none in select with no true cases",
+        source: '{@select key=foo}{@eq value=1/}{@none}Hello{/none}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello",
+        message: "none helper with no true cases in the select renders"
+      },
+      {
+        name: "none in select with one true case",
+        source: '{@select key=foo}{@eq value="bar"/}{@none}Hello{/none}{/select}',
+        context: { foo: "bar"},
+        expected: "",
+        message: "none helper with a true case in the select does not render"
+      },
+      {
+        name: "multiple none helpers",
+        source: '{@select key=foo}{@none}Hello{/none}{@eq value="cow"/}{@none} World{/none}{/select}',
+        context: { foo: "bar"},
+        expected: "Hello World",
+        message: "multiple none helpers in the same select all render"
+      },
+      {
+        name: "none nested in an none properly with its own select",
+        source: '{@select key=foo}{@eq value="bar"/}{@none}Hello{@select key=moo}{@eq value="cow"/}{@none} World{/none}{/select}{/none}{/select}',
+        context: { foo: true, moo: true},
+        expected: "Hello World",
+        message: "a none helper must have its own select to render"
+      }
+
     ]
   },
   {
@@ -1377,7 +1435,7 @@
     ]
   },
   {
-    name: "sep",
+    name: "sep / first / last",
     tests: [
       {
         name:     "sep helper with no body",
@@ -1408,6 +1466,27 @@
                   },
         expected: "3, 2, 1",
         message: "should sep helper in a async_iterator"
+      },
+      {
+        name:     "first helper",
+        source:   "{#guests}{@first}Hello {/first}{.} {/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice Bob Charlie ",
+        message:  "first helper should output on the first iteration only"
+      },
+      {
+        name:     "last helper",
+        source:   "Hello {#guests}{@last}and {/last}{.} {/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice Bob and Charlie ",
+        message:  "last helper should output on the last iteration only"
+      },
+      {
+        name:     "first / last / sep combo",
+        source:   "{#guests}{@first}Hello {/first}{@last}and {/last}{.}{@last}!{/last}{@sep}, {/sep}{/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice, Bob, and Charlie!",
+        message:  "first, last, and sep helpers should operate together"
       }
     ]
   }

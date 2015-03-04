@@ -16,6 +16,7 @@
     "dust": true,
     "require": true,
     "module": true,
+    "define": true,
     "console": true,
     "__dirname": true
   }
