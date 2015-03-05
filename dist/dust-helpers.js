@@ -1,7 +1,15 @@
-/*! dustjs-helpers - v1.5.0
+/*! dustjs-helpers - v1.6.0
 * https://github.com/linkedin/dustjs-helpers
-* Copyright (c) 2014 Aleksander Williams; Released under the MIT License */
-(function(dust){
+* Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
+(function(root, factory) {
+  if (typeof define === 'function' && define.amd && define.amd.dust === true) {
+    define(['dust.core'], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory(require('dustjs-linkedin'));
+  } else {
+    factory(root.dust);
+  }
+}(this, function(dust) {
 
 // Use dust's built-in logging when available
 var _log = dust.log ? function(msg, level) {
@@ -18,8 +26,27 @@ function _deprecated(target) {
 }
 
 function isSelect(context) {
-  var value = context.current();
-  return typeof value === "object" && value.isSelect === true;
+  return context.stack.tail &&
+         typeof context.stack.tail.head.__select__ !== "undefined";
+}
+
+function getSelectState(context) {
+  return context.get('__select__');
+}
+
+function addSelectState(context, key) {
+  var head = context.stack.head;
+  return context
+  .rebase(context.stack.tail)
+  .push({ "__select__": {
+      isResolved: false,
+      isDefaulted: false,
+      isDeferredComplete: false,
+      deferreds: [],
+      key: key
+    }
+  })
+  .push(head);
 }
 
 // Utility method : toString() equivalent for functions
@@ -46,32 +73,39 @@ function filter(chunk, context, bodies, params, filterOp) {
   var body = bodies.block,
       actualKey,
       expectedValue,
+      selectState,
       filterOpType = params.filterOpType || '';
 
-  // when @eq, @lt etc are used as standalone helpers, key is required and hence check for defined
+  // Currently we first check for a key on the helper itself, then fall back to
+  // looking for a key on the {@select} that contains it. This is undocumented
+  // behavior that we may or may not support in the future. (If we stop supporting
+  // it, just switch the order of the test below to check the {@select} first.)
   if (params.hasOwnProperty("key")) {
     actualKey = dust.helpers.tap(params.key, chunk, context);
   } else if (isSelect(context)) {
-    actualKey = context.current().selectKey;
-    //  supports only one of the blocks in the select to be selected
-    if (context.current().isResolved) {
+    selectState = getSelectState(context);
+    actualKey = selectState.key;
+    // Once one truth test in a select passes, short-circuit the rest of the tests
+    if (selectState.isResolved) {
       filterOp = function() { return false; };
     }
   } else {
-    _log("No key specified for filter in:" + filterOpType + " helper ");
+    _log("No key specified for filter in {@" + filterOpType + "}");
     return chunk;
   }
   expectedValue = dust.helpers.tap(params.value, chunk, context);
   // coerce both the actualKey and expectedValue to the same type for equality and non-equality compares
   if (filterOp(coerce(expectedValue, params.type, context), coerce(actualKey, params.type, context))) {
     if (isSelect(context)) {
-      context.current().isResolved = true;
+      if(filterOpType === 'default') {
+        selectState.isDefaulted = true;
+      }
+      selectState.isResolved = true;
     }
-    // we want helpers without bodies to fail gracefully so check it first
+    // Helpers without bodies are valid due to the use of {@any} blocks
     if(body) {
-     return chunk.render(body, context);
+      return chunk.render(body, context);
     } else {
-      _log("No body specified for " + filterOpType + " helper ");
       return chunk;
     }
   } else if (bodies['else']) {
@@ -157,16 +191,18 @@ var helpers = {
     }
   },
 
-  "idx": function(chunk, context, bodies) {
-    var body = bodies.block;
-    // Will be removed in 1.6
-    _deprecated("{@idx}");
-    if(body) {
-      return body(chunk, context.push(context.stack.index));
+  "first": function(chunk, context, bodies) {
+    if (context.stack.index === 0) {
+      return bodies.block(chunk, context);
     }
-    else {
-      return chunk;
+    return chunk;
+  },
+
+  "last": function(chunk, context, bodies) {
+    if (context.stack.index === context.stack.of - 1) {
+      return bodies.block(chunk, context);
     }
+    return chunk;
   },
 
   /**
@@ -216,37 +252,6 @@ var helpers = {
     cond argument should evaluate to a valid javascript expression
    **/
 
-  "if": function( chunk, context, bodies, params ) {
-    var body = bodies.block,
-        skip = bodies['else'],
-        cond;
-
-    if(params && params.cond) {
-      // Will be removed in 1.6
-      _deprecated("{@if}");
-
-      cond = dust.helpers.tap(params.cond, chunk, context);
-      // eval expressions with given dust references
-      if(eval(cond)){
-       if(body) {
-        return chunk.render( bodies.block, context );
-       }
-       else {
-         _log("Missing body block in the if helper!");
-         return chunk;
-       }
-      }
-      if(skip){
-       return chunk.render( bodies['else'], context );
-      }
-    }
-    // no condition
-    else {
-      _log("No condition given in the if helper!");
-    }
-    return chunk;
-  },
-
   /**
    * math helper
    * @param key is the value to perform math against
@@ -267,6 +272,7 @@ var helpers = {
               _log("operand is required for this math method");
               return null;
           };
+
       key  = dust.helpers.tap(key, chunk, context);
       operand = dust.helpers.tap(operand, chunk, context);
       //  TODO: handle  and tests for negatives and floats in all math operations
@@ -315,7 +321,8 @@ var helpers = {
         if (bodies && bodies.block) {
           // with bodies act like the select helper with mathOut as the key
           // like the select helper bodies['else'] is meaningless and is ignored
-          return chunk.render(bodies.block, context.push({ isSelect: true, isResolved: false, selectKey: mathOut }));
+          context = addSelectState(context, mathOut);
+          return chunk.render(bodies.block, context);
         } else {
           // self closing math helper will return the calculated output
           return chunk.write(mathOut);
@@ -339,23 +346,28 @@ var helpers = {
    @param type (optional), supported types are  number, boolean, string, date, context, defaults to string
    **/
   "select": function(chunk, context, bodies, params) {
-    var body = bodies.block;
-    // key is required for processing, hence check for defined
-    if( params && typeof params.key !== "undefined"){
-      // returns given input as output, if the input is not a dust reference, else does a context lookup
-      var key = dust.helpers.tap(params.key, chunk, context);
+    var body = bodies.block,
+        state, key, len, x;
+
+    if (params.hasOwnProperty("key")) {
+      key = dust.helpers.tap(params.key, chunk, context);
       // bodies['else'] is meaningless and is ignored
-      if( body ) {
-       return chunk.render(bodies.block, context.push({ isSelect: true, isResolved: false, selectKey: key }));
+      if (body) {
+        context = addSelectState(context, key);
+        state = getSelectState(context);
+        chunk = chunk.render(body, context);
+        // Resolve any deferred blocks (currently just {@any} blocks)
+        if(state.deferreds.length) {
+          state.isDeferredComplete = true;
+          for(x=0, len=state.deferreds.length; x<len; x++) {
+            state.deferreds[x]();
+          }
+        }
+      } else {
+        _log("Missing body block in {@select}");
       }
-      else {
-       _log("Missing body block in the select helper ");
-       return chunk;
-      }
-    }
-    // no key
-    else {
-      _log("No key given in the select helper!");
+    } else {
+      _log("No key provided for {@select}");
     }
     return chunk;
   },
@@ -372,11 +384,8 @@ var helpers = {
    Note : use type="number" when comparing numeric
    **/
   "eq": function(chunk, context, bodies, params) {
-    if(params) {
-      params.filterOpType = "eq";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual === expected; });
-    }
-    return chunk;
+    params.filterOpType = "eq";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual === expected; });
   },
 
   /**
@@ -391,11 +400,8 @@ var helpers = {
    Note : use type="number" when comparing numeric
    **/
   "ne": function(chunk, context, bodies, params) {
-    if(params) {
-      params.filterOpType = "ne";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual !== expected; });
-    }
-    return chunk;
+    params.filterOpType = "ne";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual !== expected; });
   },
 
   /**
@@ -410,11 +416,8 @@ var helpers = {
    Note : use type="number" when comparing numeric
    **/
   "lt": function(chunk, context, bodies, params) {
-    if(params) {
-      params.filterOpType = "lt";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual < expected; });
-    }
-    return chunk;
+    params.filterOpType = "lt";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual < expected; });
   },
 
   /**
@@ -429,13 +432,9 @@ var helpers = {
    Note : use type="number" when comparing numeric
   **/
   "lte": function(chunk, context, bodies, params) {
-    if(params) {
-      params.filterOpType = "lte";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual <= expected; });
-    }
-    return chunk;
+    params.filterOpType = "lte";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual <= expected; });
   },
-
 
   /**
    gt helper compares the given key is greater than the expected value
@@ -449,12 +448,8 @@ var helpers = {
    Note : use type="number" when comparing numeric
    **/
   "gt": function(chunk, context, bodies, params) {
-    // if no params do no go further
-    if(params) {
-      params.filterOpType = "gt";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual > expected; });
-    }
-    return chunk;
+    params.filterOpType = "gt";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual > expected; });
   },
 
  /**
@@ -469,21 +464,82 @@ var helpers = {
    Note : use type="number" when comparing numeric
   **/
   "gte": function(chunk, context, bodies, params) {
-     if(params) {
-      params.filterOpType = "gte";
-      return filter(chunk, context, bodies, params, function(expected, actual) { return actual >= expected; });
-     }
+    params.filterOpType = "gte";
+    return filter(chunk, context, bodies, params, function(expected, actual) { return actual >= expected; });
+  },
+
+  /**
+   * {@any}
+   * Outputs as long as at least one truth test inside a {@select} has passed.
+   * Must be contained inside a {@select} block.
+   * The passing truth test can be before or after the {@any} block.
+   */
+  "any": function(chunk, context, bodies, params) {
+    var selectState;
+
+    if(!isSelect(context)) {
+      _log("{@any} used outside of a {@select} block", "WARN");
+    } else {
+      selectState = getSelectState(context);
+      if(selectState.isDeferredComplete) {
+        _log("{@any} nested inside {@any} or {@none} block. It needs its own {@select} block", "WARN");
+      } else {
+        chunk = chunk.map(function(chunk) {
+          selectState.deferreds.push(function() {
+            if(selectState.isResolved && !selectState.isDefaulted) {
+              chunk = chunk.render(bodies.block, context);
+            }
+            chunk.end();
+          });
+        });
+      }
+    }
     return chunk;
   },
 
-  // to be used in conjunction with the select helper
-  // TODO: fix the helper to do nothing when used standalone
-  "default": function(chunk, context, bodies, params) {
-    // does not require any params
-     if(params) {
-        params.filterOpType = "default";
+  /**
+   * {@none}
+   * Outputs if no truth tests inside a {@select} pass.
+   * Must be contained inside a {@select} block.
+   * The position of the helper does not matter.
+   */
+  "none": function(chunk, context, bodies, params) {
+    var selectState;
+
+    if(!isSelect(context)) {
+      _log("{@none} used outside of a {@select} block", "WARN");
+    } else {
+      selectState = getSelectState(context);
+      if(selectState.isDeferredComplete) {
+        _log("{@none} nested inside {@any} or {@none} block. It needs its own {@select} block", "WARN");
+      } else {
+        chunk = chunk.map(function(chunk) {
+          selectState.deferreds.push(function() {
+            if(!selectState.isResolved) {
+              chunk = chunk.render(bodies.block, context);
+            }
+            chunk.end();
+          });
+        });
       }
-     return filter(chunk, context, bodies, params, function(expected, actual) { return true; });
+    }
+    return chunk;
+  },
+
+  /**
+   * {@default}
+   * Outputs if no truth test inside a {@select} has passed.
+   * Must be contained inside a {@select} block.
+   */
+  "default": function(chunk, context, bodies, params) {
+    params.filterOpType = "default";
+    // Deprecated for removal in 1.7
+    _deprecated("{@default}");
+    if(!isSelect(context)) {
+      _log("{@default} used outside of a {@select} block", "WARN");
+      return chunk;
+    }
+    return filter(chunk, context, bodies, params, function() { return true; });
   },
 
   /**
@@ -523,12 +579,10 @@ var helpers = {
 
 };
 
-  for (var key in helpers) {
+  for(var key in helpers) {
     dust.helpers[key] = helpers[key];
   }
 
-  if(typeof exports !== 'undefined') {
-    module.exports = dust;
-  }
+  return dust;
 
-})(typeof exports !== 'undefined' ? require('dustjs-linkedin') : dust);
+}));

@@ -1,6 +1,14 @@
 ## Change Log
 
-### upcoming (2014/11/20 00:55 +00:00)
+### v1.6.0 (2015/03/05 18:00 +00:00)
+- [#110](https://github.com/linkedin/dustjs-helpers/pull/110) Remove {@if} and {@idx} (@jimmyhchan)
+- [#111](https://github.com/linkedin/dustjs-helpers/pull/111) Add AMD support (@sethkinast)
+- [#109](https://github.com/linkedin/dustjs-helpers/pull/107) {@select} with an undefined key still runs (@sethkinast)
+- [#108](https://github.com/linkedin/dustjs-helpers/pull/108) Add {@none} helper (@sethkinast)
+- [#103](https://github.com/linkedin/dustjs-helpers/pull/103) Add {@first} and {@last} helpers (@sethkinast)
+- [#107](https://github.com/linkedin/dustjs-helpers/pull/107) Add {@any} helper (@sethkinast)
+
+### v1.5.0 (2014/11/20 00:55 +00:00)
 - [#102](https://github.com/linkedin/dustjs-helpers/pull/102) Deprecate {@if} and {@idx} helpers (@sethkinast)
 - [#105](https://github.com/linkedin/dustjs-helpers/pull/105) Comparison helpers should still execute when their key parameter is set, but it resolves to undefined. (@sethkinast)
 - [#104](https://github.com/linkedin/dustjs-helpers/pull/104) Coerce falsy values when a type is specified by a comparison helper. (@sethkinast)
