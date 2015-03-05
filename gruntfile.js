@@ -157,44 +157,6 @@ module.exports = function (grunt) {
           stdout: true,
           failOnError: true
         }
-      },
-      gitAddArchive: {
-        command: 'git add <%= paths.archive %>',
-        options: {
-          stdout: true
-        }
-      }
-    },
-    compress: {
-      distTarBall: {
-        options: {
-          archive: '<%=paths.archive%>/<%=distName%>.tar.gz',
-          mode: 'tgz',
-          pretty: true
-        },
-        files: [
-          {
-            expand: true,
-            cwd: '<%=paths.dist%>',
-            src: ['*.js', 'LICENSE'],
-            dest: '<%=distName%>/'
-          }
-        ]
-      },
-      distZip: {
-        options: {
-          archive: '<%=paths.archive%>/<%=distName%>.zip',
-            mode: 'zip',
-            pretty: true
-        },
-        files: [
-          {
-            expand: true,
-            cwd: '<%=paths.dist%>',
-            src: ['*.js', 'LICENSE'],
-            dest: '<%=distName%>/'
-          }
-        ]
       }
     },
     bump: {
@@ -248,7 +210,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-shell');
 
@@ -274,9 +235,9 @@ module.exports = function (grunt) {
   grunt.registerTask('coverage',     ['jasmine:coverage', 'log:coverage']);
 
   //release tasks
-  grunt.registerTask('buildRelease', ['test', 'copy:release', 'compress']);
-  grunt.registerTask('releasePatch', ['bump-only:patch', 'buildRelease', 'shell:gitAddArchive', 'bump-commit']);
-  grunt.registerTask('releaseMinor', ['bump-only:minor', 'buildRelease', 'shell:gitAddArchive', 'bump-commit']);
+  grunt.registerTask('buildRelease', ['test', 'copy:release']);
+  grunt.registerTask('releasePatch', ['bump-only:patch', 'buildRelease', 'bump-commit']);
+  grunt.registerTask('releaseMinor', ['bump-only:minor', 'buildRelease', 'bump-commit']);
 
   //default task - full test
   grunt.registerTask('default',      ['test']);
