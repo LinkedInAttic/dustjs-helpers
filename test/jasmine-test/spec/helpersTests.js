@@ -1234,6 +1234,13 @@
         context:  {},
         expected: "you have 0 new messages",
         message: "should test if size helper is working properly when the value is not present in context"
+      },
+      {
+        name:     "size helper with value evaluated to a JavaScript function",
+        source:   'you have {@size key="{myValue}"/} new messages',
+        context:  { myValue: 'foo' },
+        expected: "you have 3 new messages",
+        message:  "should test if size helper is working properly when the value is evaluated to a JavaScript function"
       }
     ]
   },
