@@ -49,7 +49,8 @@
          source:   '<div>{@math key="0" method="mod" operand="0"/}</div>',
          context:  {},
          expected: "<div>NaN</div>",
-         message: "testing math/mod helper with zero as operand value"
+         message: "testing math/mod helper with zero as operand value",
+         log: "Division by 0 in {@math} helper"
        },
        {
            name:     "math/mod helper with negative zero as operand value",
@@ -101,7 +102,7 @@
         message: "should test the math/mod helper using $idx without quotes"
       },
       {
-        name:     "math helper mod using $idx without quotes with lizt size = 2",
+        name:     "math helper mod using $idx without quotes with list size = 2",
         source:   '{#list}<div>{@math key=$idx method="mod" operand="2"/}</div>{/list}',
         context:  { list: [ { y: 'foo' }, { y: "bar"} ]},
         expected: "<div>0</div><div>1</div>",
@@ -189,7 +190,8 @@
          source:   '{@math key="-0" method="blah" operand="-4"/}',
          context:  {},
          expected: "",
-         message: "math helper blah operation"
+         message: "math helper blah operation",
+         log: "{@math}: method blah not supported"
        },
       {
          name:     "math helper key as zero",
@@ -439,14 +441,15 @@
         source:   "{@eq key=\"foo\" value=\"foo\"/}",
         context:  {},
         expected: "",
-        message: "eq helper with no body silently fails with console log"
+        message: "eq helper with no body is silent"
       },
       {
         name:     "eq helper with no params",
         source:   "{@eq}Hello{:else}Goodbye{/eq}",
         context:  {},
         expected: "",
-        message: "eq helper with no params does not execute"
+        message: "eq helper with no params does not execute",
+        log: "No key specified for filter in {@eq}"
       },
       {
         name:     "eq helper with key that resolves to undefined",
@@ -540,7 +543,7 @@
         source:   "{@ne key=\"foo\" value=\"foo\"/}",
         context:  {},
         expected: "",
-        message: "ne helper with no body silently fails with console log"
+        message: "ne helper with no body is silent"
       },
       {
         name:     "ne helper with no params",
@@ -608,7 +611,7 @@
         source:   "{@lt key=\"2\" value=\"3\" type=\"number\"/}",
         context:  {},
         expected: "",
-        message: "lt helper with no body silently fails with console log"
+        message: "lt helper with no body is silent"
       },
       {
         name:     "lt helper with no params",
@@ -711,21 +714,21 @@
         source:   "{@lte key=\"2\" value=\"3\" type=\"number\"/}",
         context:  {},
         expected: "",
-        message: "lte helper with no body silently fails with console log"
+        message: "lte helper with no body is silent"
       },
       {
         name:     "gt helper with no body",
         source:   "{@gt key=\"5\" value=\"3\" type=\"number\"/}",
         context:  {},
         expected: "",
-        message: "gt helper with no body silently fails with console log"
+        message: "gt helper with no body is silent"
       },
       {
         name:     "gte helper with no body",
         source:   "{@gte key=\"5\" value=\"3\" type=\"number\"/}",
         context:  {},
         expected: "",
-        message: "gte helper with no body silently fails with console log"
+        message: "gte helper with no body is silent"
       }
     ]
   },
@@ -737,7 +740,8 @@
         source:   "{@select key=\"foo\"/}",
         context:  {},
         expected: "",
-        message: "select helper with no body silently fails with console log"
+        message: "select helper with no body is silent",
+        log: "Missing body block in {@select}"
       },
       {
         name:     "select helper with a constant string and condition eq",
@@ -927,6 +931,7 @@
                    "{/select}{/b}"].join("\n"),
         context:  { b : { z: "foo", x: "bar" } },
         expected: "",
+        log: "No key provided for {@select}",
         message: "should test select helper with missing key in the context and hence no output"
       },
       {

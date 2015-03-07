@@ -12,19 +12,32 @@
 
   dust.debugLevel = "DEBUG";
 
+  function messageInLog(log, message, level) {
+    var i;
+    for(i = 0; i < log.length; i++) {
+      if(log[i].message === message) {
+        return (!level || log[i].level === level);
+      }
+    }
+    return false;
+  }
+
   function render(test) {
-  return function() {
-    try {
-      dust.loadSource(dust.compile(test.source, test.name));
-      dust.render(test.name, test.context, function(err, output) {
-        expect(err).toBeNull();
-        expect(output).toEqual(test.expected);
-      });
-    }
-    catch (error) {
-      expect(error.message).toEqual(test.error || {} );
-    }
-  };
+    return function() {
+      try {
+        dust.loadSource(dust.compile(test.source, test.name));
+        dust.render(test.name, test.context, function(err, output) {
+          expect(err).toBeNull();
+          expect(output).toEqual(test.expected);
+          if(test.log) {
+            expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
+          }
+        });
+      }
+      catch (error) {
+        expect(error.message).toEqual(test.error || {} );
+      }
+    };
 }
 
   function stream(test) {
@@ -34,6 +47,7 @@
       flag = false;
       output = "";
       try {
+        dust.logQueue = [];
         dust.loadSource(dust.compile(test.source, test.name));
         dust.stream(test.name, test.context)
         .on("data", function(data) {
@@ -60,6 +74,9 @@
         expect(output).toEqual(test.error || {} );
       } else {
         expect(output).toEqual(test.expected);
+      }
+      if(test.log) {
+        expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
       }
     });
   };
@@ -100,6 +117,9 @@
           expect(output).toEqual(test.error || {});
         } else {
           expect(output).toEqual(test.expected);
+        }
+        if(test.log) {
+          expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
         }
       });
     };
