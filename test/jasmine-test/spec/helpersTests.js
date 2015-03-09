@@ -50,7 +50,7 @@
          context:  {},
          expected: "<div>NaN</div>",
          message: "testing math/mod helper with zero as operand value",
-         log: "Division by 0 in {@math} helper"
+         log: "{@math}: Division by 0"
        },
        {
            name:     "math/mod helper with negative zero as operand value",
@@ -191,7 +191,7 @@
          context:  {},
          expected: "",
          message: "math helper blah operation",
-         log: "{@math}: method blah not supported"
+         log: "{@math}: Method `blah` is not supported"
        },
       {
          name:     "math helper key as zero",
@@ -254,28 +254,29 @@
         source:   '<div>{@math key="{y}" method="divide" operand="{y}"/}</div>',
         context:  { y : null},
         expected: "<div>NaN</div>",
-        message: "testing math/divide helper with null as key and operand value"
+        message: "testing math/divide helper with null as key and operand value",
       },
       {
         name:     "math helper divide  with null as operand value",
         source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
         context:  { y : null},
         expected: "<div>NaN</div>",
-        message: "testing math/divide helper with null as operand value"
+        message: "testing math/divide helper with null as operand value",
       },
       {
          name:     "math helper divide  with null as undefined value",
          source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
          context:  { y : undefined},
          expected: "<div>NaN</div>",
-         message: "testing math/divide helper with null as undefined value"
+         message: "testing math/divide helper with null as undefined value",
        },
       {
          name:     "math helper mod with negative 0 as operand",
          source:   '<div>{@math key="16" method="mod" operand="{y}"/}</div>',
          context:  { y : -0 },
          expected: "<div>NaN</div>",
-         message: "testing math/mod helper with negative 0 as operand"
+         message: "testing math/mod helper with negative 0 as operand",
+         log: "{@math}: Division by 0"
       },
       {
          name:     "math helper mod with null as key and operand",
@@ -296,21 +297,24 @@
            source:   '<div>{@math key="doh" method="divide" operand="{y}"/}</div>',
            context:  { y : 0 },
            expected: "<div>NaN</div>",
-           message: "testing math/divide helper using key as non numeric"
+           message: "testing math/divide helper using key as non numeric",
+           log: "{@math}: Division by 0"
       },
       {
            name:     "math helper divide using 0 for variable",
            source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
            context:  { y : 0 },
            expected: "<div>Infinity</div>",
-           message: "testing math/divide helper using 0 for variable as operand"
+           message: "testing math/divide helper using 0 for variable as operand",
+           log: "{@math}: Division by 0"
        },
       {
           name:     "math helper divide using negative 0 for variable",
           source:   '<div>{@math key="16" method="divide" operand="{y}"/}</div>',
           context:  { y : -0 },
           expected: "<div>Infinity</div>",
-          message: "testing math/divide helper using negative 0 for variable as operand"
+          message: "testing math/divide helper using negative 0 for variable as operand",
+          log: "{@math}: Division by 0"
       },
       {
         name:     "math helper floor numbers",
@@ -449,7 +453,7 @@
         context:  {},
         expected: "",
         message: "eq helper with no params does not execute",
-        log: "No key specified for filter in {@eq}"
+        log: "{@eq}: No key specified"
       },
       {
         name:     "eq helper with key that resolves to undefined",
@@ -550,7 +554,8 @@
         source:   "{@ne}Hello{/ne}",
         context:  {},
         expected: "",
-        message: "ne helper with no params does not execute"
+        message: "ne helper with no params does not execute",
+        log: "{@ne}: No key specified"
       },
       {
         name:     "ne helper matching string case",
@@ -618,7 +623,8 @@
         source:   "{@lt}Hello{/lt}",
         context:  {},
         expected: "",
-        message: "lt helper with no params does not execute"
+        message: "lt helper with no params does not execute",
+        log: "{@lt}: No key specified"
       },
       {
         name:     "lt helper defaults to type number",
@@ -693,21 +699,24 @@
         source:   "{@gt}Hello{/gt}",
         context:  {},
         expected: "",
-        message: "gt helper with no params does not execute"
+        message: "gt helper with no params does not execute",
+        log: "{@gt}: No key specified"
       },
       {
         name:     "lte helper with no params",
         source:   "{@lte}Hello{/lte}",
         context:  {},
         expected: "",
-        message: "lte helper with no params does not execute"
+        message: "lte helper with no params does not execute",
+        log: "{@lte}: No key specified"
       },
       {
         name:     "gte helper with no params",
         source:   "{@gte}Hello{/gte}",
         context:  {},
         expected: "",
-        message: "gte helper with no params does not execute"
+        message: "gte helper with no params does not execute",
+        log: "{@gte}: No key specified"
       },
       {
         name:     "lte helper with no body",
@@ -741,7 +750,7 @@
         context:  {},
         expected: "",
         message: "select helper with no body is silent",
-        log: "Missing body block in {@select}"
+        log: "{@select}: Missing body block"
       },
       {
         name:     "select helper with a constant string and condition eq",
@@ -931,7 +940,7 @@
                    "{/select}{/b}"].join("\n"),
         context:  { b : { z: "foo", x: "bar" } },
         expected: "",
-        log: "No key provided for {@select}",
+        log: "{@select}: `key` is required",
         message: "should test select helper with missing key in the context and hence no output"
       },
       {
@@ -1039,7 +1048,8 @@
         source: '{@any}Hello{/any}',
         context: { any: 'abc'},
         expected: "",
-        message: "any helper outside of select does not render"
+        message: "any helper outside of select does not render",
+        log: "{@any}: Must be used inside a {@select} block"
       },
       {
         name: "any in select with no cases",
@@ -1109,7 +1119,8 @@
         source: '{@select key=foo}{@eq value="bar"/}{@any}Hello{@any} World{/any}{/any}{/select}',
         context: { foo: "bar"},
         expected: "Hello",
-        message: "an any helper cannot be nested inside an any helper without a select"
+        message: "an any helper cannot be nested inside an any helper without a select",
+        log: "{@any}: Must not be nested"
       },
       {
         name: "any nested in an any properly with its own select",
@@ -1135,7 +1146,8 @@
         source: '{@none}Hello{/none}',
         context: { none: 'abc'},
         expected: "",
-        message: "none helper outside of select does not render"
+        message: "none helper outside of select does not render",
+        log: "{@none}: Must be used inside a {@select} block"
       },
       {
         name: "none in select with no cases",
@@ -1172,7 +1184,6 @@
         expected: "Hello World",
         message: "a none helper must have its own select to render"
       }
-
     ]
   },
   {
@@ -1464,7 +1475,8 @@
           source:   "{@contextDump to=\"console\"/}",
           context:  { "A": 2, "B": 3},
           expected: "",
-          message: "contextDump simple test"
+          message: "contextDump simple test",
+          log: '{@contextDump}: {\n  "A": 2,\n  "B": 3\n}'
       },
       {
           name:     "contextDump full test",
