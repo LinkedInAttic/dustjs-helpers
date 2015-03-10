@@ -992,6 +992,42 @@
         },
         expected: "Right",
         message: "should test that the current context is still accessible within the select"
+      },
+      {
+        name:     "select helper inside an array reaching outside",
+        source:   ['{#skills}{@select key="{.}"}',
+                     '{@eq value="java"}JAVA {outside},{/eq}',
+                     '{@eq value="js"}JS {outside},{/eq}',
+                     '{@default value="foo"}UNKNOWN {outside}{/default}',
+                   '{/select}{/skills}'].join("\n"),
+        context:  { "skills" : [ "java", "js" , "unknown"], "outside": 'foo' },
+        expected: "JAVA foo,JS foo,UNKNOWN foo",
+        message: "should test select helper inside a array with {.} and reaches outside"
+      },
+      {
+        name: "select helper inside an array reaching for outside parameter",
+        source:   ['{#data.messages outside="outside"}',
+                    '{@select key="{message}"}',
+                        '{@eq value="done"}',
+                        '    done {message} ',
+                        '    {outside}',
+                        '{/eq} ',
+                        '{@default}',
+                        '    default {message} ',
+                        '    {outside}',
+                        '{/default}',
+                    '{/select}',
+                    '{/data.messages}'].join("\n"),
+        context: {
+          data: {
+            messages: [
+              { message: "done" },
+              { message: "default" }
+            ]
+          }
+        },
+        expected: "done done outside  default default outside",
+        message: "should test select helper with params in an outer section"
       }
     ]
   },
