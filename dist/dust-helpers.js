@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.6.0
+/*! dustjs-helpers - v1.6.1
 * https://github.com/linkedin/dustjs-helpers
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -35,9 +35,14 @@ function getSelectState(context) {
 }
 
 function addSelectState(context, key) {
-  var head = context.stack.head;
-  return context
-  .rebase(context.stack.tail)
+  var head = context.stack.head,
+      newContext = context.rebase();
+
+  if(context.stack && context.stack.tail) {
+    newContext.stack = context.stack.tail;
+  }
+
+  return newContext
   .push({ "__select__": {
       isResolved: false,
       isDefaulted: false,
@@ -46,7 +51,7 @@ function addSelectState(context, key) {
       key: key
     }
   })
-  .push(head);
+  .push(head, context.stack.index, context.stack.of);
 }
 
 // Utility method : toString() equivalent for functions
@@ -267,51 +272,50 @@ var helpers = {
           // operand can be null for "abs", ceil and floor
           operand = params.operand,
           round = params.round,
-          mathOut = null,
-          operError = function(){
-              _log("operand is required for this math method");
-              return null;
-          };
+          mathOut = null;
 
-      key  = dust.helpers.tap(key, chunk, context);
-      operand = dust.helpers.tap(operand, chunk, context);
+      key = parseFloat(dust.helpers.tap(key, chunk, context));
+      operand = parseFloat(dust.helpers.tap(operand, chunk, context));
       //  TODO: handle  and tests for negatives and floats in all math operations
       switch(method) {
         case "mod":
           if(operand === 0 || operand === -0) {
-            _log("operand for divide operation is 0/-0: expect Nan!");
+            _log("Division by 0 in {@math} helper", "WARN");
           }
-          mathOut = parseFloat(key) %  parseFloat(operand);
+          mathOut = key % operand;
           break;
         case "add":
-          mathOut = parseFloat(key) + parseFloat(operand);
+          mathOut = key + operand;
           break;
         case "subtract":
-          mathOut = parseFloat(key) - parseFloat(operand);
+          mathOut = key - operand;
           break;
         case "multiply":
-          mathOut = parseFloat(key) * parseFloat(operand);
+          mathOut = key * operand;
           break;
         case "divide":
-         if(operand === 0 || operand === -0) {
-           _log("operand for divide operation is 0/-0: expect Nan/Infinity!");
-         }
-          mathOut = parseFloat(key) / parseFloat(operand);
+          if(operand === 0 || operand === -0) {
+            _log("Division by 0 in {@math} helper", "WARN");
+          }
+          mathOut = key / operand;
           break;
         case "ceil":
-          mathOut = Math.ceil(parseFloat(key));
+          mathOut = Math.ceil(key);
           break;
         case "floor":
-          mathOut = Math.floor(parseFloat(key));
+          mathOut = Math.floor(key);
           break;
         case "round":
-          mathOut = Math.round(parseFloat(key));
+          mathOut = Math.round(key);
           break;
         case "abs":
-          mathOut = Math.abs(parseFloat(key));
+          mathOut = Math.abs(key);
+          break;
+        case "toint":
+          mathOut = parseInt(key, 10);
           break;
         default:
-          _log("method passed is not supported");
+          _log("{@math}: method " + method + " not supported");
      }
 
       if (mathOut !== null){
@@ -367,7 +371,7 @@ var helpers = {
         _log("Missing body block in {@select}");
       }
     } else {
-      _log("No key provided for {@select}");
+      _log("No key provided for {@select}", "WARN");
     }
     return chunk;
   },
