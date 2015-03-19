@@ -84,7 +84,7 @@ module.exports = function (grunt) {
       testProd : {
         src : '<%=paths.helpersMin%>',
         options: {
-          keepRunner: false,
+          keepRunner: grunt.option('keepRunner'),
           specs:   ['<%=paths.test%>/testUtils.js', '<%=paths.testSpecs%>/renderTestSpec.js'],
           helpers: ['<%=paths.testSpecs%>/helpersTests.js'],
           vendor:  ['<%=paths.dustMin%>']
