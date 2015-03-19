@@ -1117,6 +1117,13 @@
         context: { foo: "bar", moo: "cow"},
         expected: "Hello World",
         message: "an any helper must have its own select to render"
+      },
+      {
+        name: "any with a multikey select",
+        source: '{@select key=one}{@eq value="true"/}{@eq key=two value="true"/}{@any}Hello{/any}{/select}',
+        context: { one: "false", two: "true" },
+        expected: "Hello",
+        message: "any helpers inside multikey selects render"
       }
     ]
   },
