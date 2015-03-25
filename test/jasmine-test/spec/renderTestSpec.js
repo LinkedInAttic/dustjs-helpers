@@ -14,8 +14,9 @@
 
   function messageInLog(log, message, level) {
     var i;
+    log = log || [];
     for(i = 0; i < log.length; i++) {
-      if(log[i].message === message) {
+      if(log[i].message.indexOf(message) > -1) {
         return (!level || log[i].level === level);
       }
     }
@@ -30,7 +31,7 @@
           expect(err).toBeNull();
           expect(output).toEqual(test.expected);
           if(test.log) {
-            expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
+            expect(messageInLog(dust.logQueue, test.log, test.logLevel)).toEqual(true);
           }
         });
       }
@@ -76,7 +77,7 @@
         expect(output).toEqual(test.expected);
       }
       if(test.log) {
-        expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
+        expect(messageInLog(dust.logQueue, test.log, test.logLevel)).toEqual(true);
       }
     });
   };
@@ -119,7 +120,7 @@
           expect(output).toEqual(test.expected);
         }
         if(test.log) {
-          expect(messageInLog(dust.logQueue, test.log)).toEqual(true);
+          expect(messageInLog(dust.logQueue, test.log, test.logLevel)).toEqual(true);
         }
       });
     };
