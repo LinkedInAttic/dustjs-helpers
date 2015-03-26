@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.6.1
+/*! dustjs-helpers - v1.6.2
 * https://github.com/linkedin/dustjs-helpers
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -12,16 +12,17 @@
 }(this, function(dust) {
 
 // Use dust's built-in logging when available
-var _log = dust.log ? function(msg, level) {
+var _log = dust.log ? function(helper, msg, level) {
   level = level || "INFO";
-  dust.log(msg, level);
+  helper = helper ? '{@' + helper + '}: ' : '';
+  dust.log(helper + msg, level);
 } : function() {};
 
 var _deprecatedCache = {};
 function _deprecated(target) {
   if(_deprecatedCache[target]) { return; }
-  _log("Deprecation warning: " + target + " is deprecated and will be removed in a future version of dustjs-helpers", "WARN");
-  _log("For help and a deprecation timeline, see https://github.com/linkedin/dustjs-helpers/wiki/Deprecated-Features#" + target.replace(/\W+/g, ""), "WARN");
+  _log(target, "Deprecation warning: " + target + " is deprecated and will be removed in a future version of dustjs-helpers", "WARN");
+  _log(null, "For help and a deprecation timeline, see https://github.com/linkedin/dustjs-helpers/wiki/Deprecated-Features#" + target.replace(/\W+/g, ""), "WARN");
   _deprecatedCache[target] = true;
 }
 
@@ -31,7 +32,7 @@ function isSelect(context) {
 }
 
 function getSelectState(context) {
-  return context.get('__select__');
+  return isSelect(context) && context.get('__select__');
 }
 
 function addSelectState(context, key) {
@@ -78,7 +79,7 @@ function filter(chunk, context, bodies, params, filterOp) {
   var body = bodies.block,
       actualKey,
       expectedValue,
-      selectState,
+      selectState = getSelectState(context),
       filterOpType = params.filterOpType || '';
 
   // Currently we first check for a key on the helper itself, then fall back to
@@ -87,21 +88,20 @@ function filter(chunk, context, bodies, params, filterOp) {
   // it, just switch the order of the test below to check the {@select} first.)
   if (params.hasOwnProperty("key")) {
     actualKey = dust.helpers.tap(params.key, chunk, context);
-  } else if (isSelect(context)) {
-    selectState = getSelectState(context);
+  } else if (selectState) {
     actualKey = selectState.key;
     // Once one truth test in a select passes, short-circuit the rest of the tests
     if (selectState.isResolved) {
       filterOp = function() { return false; };
     }
   } else {
-    _log("No key specified for filter in {@" + filterOpType + "}");
+    _log(filterOpType, "No key specified", "WARN");
     return chunk;
   }
   expectedValue = dust.helpers.tap(params.value, chunk, context);
   // coerce both the actualKey and expectedValue to the same type for equality and non-equality compares
   if (filterOp(coerce(expectedValue, params.type, context), coerce(actualKey, params.type, context))) {
-    if (isSelect(context)) {
+    if (selectState) {
       if(filterOpType === 'default') {
         selectState.isDefaulted = true;
       }
@@ -155,6 +155,9 @@ var helpers = {
 
   */
   "tap": function(input, chunk, context) {
+    // deprecated for removal in 1.8
+    _deprecated("tap");
+
     // return given input if there is no dust reference to resolve
     // dust compiles a string/reference such as {foo} to a function
     if (typeof input !== "function") {
@@ -231,7 +234,7 @@ var helpers = {
       dump = JSON.stringify(context.stack.head, jsonFilter, 2);
     }
     if (to === 'console') {
-      _log(dump);
+      _log('contextDump', dump);
       return chunk;
     }
     else {
@@ -280,7 +283,7 @@ var helpers = {
       switch(method) {
         case "mod":
           if(operand === 0 || operand === -0) {
-            _log("Division by 0 in {@math} helper", "WARN");
+            _log("math", "Division by 0", "ERROR");
           }
           mathOut = key % operand;
           break;
@@ -295,7 +298,7 @@ var helpers = {
           break;
         case "divide":
           if(operand === 0 || operand === -0) {
-            _log("Division by 0 in {@math} helper", "WARN");
+            _log("math", "Division by 0", "ERROR");
           }
           mathOut = key / operand;
           break;
@@ -315,7 +318,7 @@ var helpers = {
           mathOut = parseInt(key, 10);
           break;
         default:
-          _log("{@math}: method " + method + " not supported");
+          _log("math", "Method `" + method + "` is not supported", "ERROR");
      }
 
       if (mathOut !== null){
@@ -337,7 +340,7 @@ var helpers = {
     }
     // no key parameter and no method
     else {
-      _log("Key is a required parameter for math helper along with method/operand!");
+      _log("math", "`key` or `method` was not provided", "ERROR");
     }
     return chunk;
   },
@@ -368,10 +371,10 @@ var helpers = {
           }
         }
       } else {
-        _log("Missing body block in {@select}");
+        _log("select", "Missing body block", "WARN");
       }
     } else {
-      _log("No key provided for {@select}", "WARN");
+      _log("select", "`key` is required", "ERROR");
     }
     return chunk;
   },
@@ -479,14 +482,13 @@ var helpers = {
    * The passing truth test can be before or after the {@any} block.
    */
   "any": function(chunk, context, bodies, params) {
-    var selectState;
+    var selectState = getSelectState(context);
 
-    if(!isSelect(context)) {
-      _log("{@any} used outside of a {@select} block", "WARN");
+    if(!selectState) {
+      _log("any", "Must be used inside a {@select} block", "ERROR");
     } else {
-      selectState = getSelectState(context);
       if(selectState.isDeferredComplete) {
-        _log("{@any} nested inside {@any} or {@none} block. It needs its own {@select} block", "WARN");
+        _log("any", "Must not be nested inside {@any} or {@none} block", "ERROR");
       } else {
         chunk = chunk.map(function(chunk) {
           selectState.deferreds.push(function() {
@@ -508,14 +510,13 @@ var helpers = {
    * The position of the helper does not matter.
    */
   "none": function(chunk, context, bodies, params) {
-    var selectState;
+    var selectState = getSelectState(context);
 
-    if(!isSelect(context)) {
-      _log("{@none} used outside of a {@select} block", "WARN");
+    if(!selectState) {
+      _log("none", "Must be used inside a {@select} block", "ERROR");
     } else {
-      selectState = getSelectState(context);
       if(selectState.isDeferredComplete) {
-        _log("{@none} nested inside {@any} or {@none} block. It needs its own {@select} block", "WARN");
+        _log("none", "Must not be nested inside {@any} or {@none} block", "ERROR");
       } else {
         chunk = chunk.map(function(chunk) {
           selectState.deferreds.push(function() {
@@ -538,9 +539,9 @@ var helpers = {
   "default": function(chunk, context, bodies, params) {
     params.filterOpType = "default";
     // Deprecated for removal in 1.7
-    _deprecated("{@default}");
+    _deprecated("default");
     if(!isSelect(context)) {
-      _log("{@default} used outside of a {@select} block", "WARN");
+      _log("default", "Must be used inside a {@select} block", "ERROR");
       return chunk;
     }
     return filter(chunk, context, bodies, params, function() { return true; });
