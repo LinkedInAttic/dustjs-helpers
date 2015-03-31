@@ -54,6 +54,7 @@
     "grunt-contrib-copy": "~0.5.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-bump": "~0.0.13",
+    "grunt-github-changes": "~0.0.6",
     "grunt-shell": "~0.6.3"
   },
   "license": "MIT",

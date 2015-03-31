@@ -190,6 +190,17 @@ module.exports = function (grunt) {
         files: ['<%=paths.lib%>/**/*.js', '<%=paths.testSpecs%>/**/*.js'],
         tasks: ['testPhantom']
       }
+    },
+    githubChanges: {
+      dist: {
+        options: {
+          owner: "linkedin",
+          repository: "dustjs-helpers",
+          onlyPulls: true,
+          useCommitBody: true,
+          auth: true
+        }
+      }
     }
   });
 
@@ -212,6 +223,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-bump');
   grunt.loadNpmTasks('grunt-shell');
+  grunt.loadNpmTasks('grunt-github-changes');
 
   //--------------------------------------------------
   //------------Grunt task aliases -------------------
@@ -235,7 +247,7 @@ module.exports = function (grunt) {
   grunt.registerTask('coverage',     ['jasmine:coverage', 'log:coverage']);
 
   //release tasks
-  grunt.registerTask('buildRelease', ['test', 'copy:release']);
+  grunt.registerTask('buildRelease', ['test', 'githubChanges', 'copy:release']);
   grunt.registerTask('releasePatch', ['bump-only:patch', 'buildRelease', 'bump-commit']);
   grunt.registerTask('releaseMinor', ['bump-only:minor', 'buildRelease', 'bump-commit']);
 
