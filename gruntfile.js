@@ -85,8 +85,9 @@ module.exports = function (grunt) {
         src : '<%=paths.helpersMin%>',
         options: {
           keepRunner: false,
-          specs:   ['<%=paths.test%>/testUtils.js', '<%=paths.testSpecs%>/renderTestSpec.js'],
+          display: 'short',
           helpers: ['<%=paths.testSpecs%>/helpersTests.js'],
+          specs:   ['<%=paths.test%>/testUtils.js', '<%=paths.testSpecs%>/renderTestSpec.js'],
           vendor:  ['<%=paths.dustMin%>']
         }
       },
@@ -106,6 +107,7 @@ module.exports = function (grunt) {
         src: '<%=paths.helpers%>',
         options : {
           keepRunner: false,
+          display: 'none',
           specs :   '<%=jasmine.testProd.options.specs%>',
           helpers : '<%=jasmine.testProd.options.helpers%>',
           vendor :  '<%=jasmine.testProd.options.vendor%>',
@@ -145,10 +147,11 @@ module.exports = function (grunt) {
       testRhino : {
         command : function() {
           var commandList = [],
-            fs = require('fs');
-          fs.readdirSync(__dirname + '/test/rhino-test/lib').forEach( function(rhinoJar) {
+            fs = require('fs'),
+            rhinoFolder = 'test/rhino-test/';
+          fs.readdirSync(__dirname  + '/' + rhinoFolder + 'lib').forEach( function(rhinoJar) {
             if(rhinoJar.indexOf('.jar') >= 0) {
-              commandList.push('java -jar test/rhino-test/lib/' + rhinoJar + ' -f test/rhino-test/rhinoTest.js');
+              commandList.push('java -jar ' + rhinoFolder + 'lib/' + rhinoJar + ' -f ' + rhinoFolder + 'rhinoTest.js');
             }
           });
           return commandList.join(' && ');
@@ -157,7 +160,7 @@ module.exports = function (grunt) {
           stdout: true,
           failOnError: true
         }
-      }
+      },
     },
     bump: {
       options: {

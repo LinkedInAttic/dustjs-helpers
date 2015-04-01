@@ -1120,7 +1120,7 @@
         context: { foo: "bar"},
         expected: "Hello",
         message: "an any helper cannot be nested inside an any helper without a select",
-        log: "{@any}: Must not be nested"
+        log: "{@any}: Must not be nested inside {@any} or {@none} block"
       },
       {
         name: "any nested in an any properly with its own select",

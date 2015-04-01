@@ -19,16 +19,15 @@ function dumpError(err) {
 for (var i=0; i<helpersTests.length; i++) {
   var suite = new uutest.Suite({
     pass: function() {
-      process.stdout.write("");
+      process.stdout.write('.');
     },
     fail: function(err) {
       process.stdout.write("F");
     },
     done: function(passed, failed, elapsed) {
-      process.stdout.write("\n");
-      console.log(passed + " passed " + failed + " failed " + "(" + elapsed + "ms)");
       this.errors.forEach(function(err) {
         console.log(dumpError(err));
+        process.exit(1);
       });
     }
   });
