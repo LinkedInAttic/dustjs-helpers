@@ -135,10 +135,7 @@ module.exports = function (grunt) {
     },
     shell : {
       testNode: {
-        command: [
-          'node test/server.js',
-          'node test/jasmine-test/server/specRunner.js'
-        ].join(' && '),
+        command: 'node test/server.js',
         options: {
           stdout: true,
           failOnError: true
