@@ -1,3 +1,4 @@
+/*global dust*/
 (function(dust) {
 
   var helpersTests = [
@@ -1562,6 +1563,6 @@
   if (typeof exports !== "undefined") {
     module.exports = helpersTests; // We're on node.js
   } else {
-    this['helpersTests'] = helpersTests; // We're on the browser
+    this.helpersTests = helpersTests; // We're on the browser
   }
 })(typeof exports !== 'undefined' ? require('dustjs-linkedin') : dust);
