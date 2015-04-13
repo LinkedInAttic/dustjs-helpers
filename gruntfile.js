@@ -199,6 +199,7 @@ module.exports = function (grunt) {
         options: {
           owner: "linkedin",
           repository: "dustjs-helpers",
+          tagName: "<%= pkg.version %>",
           onlyPulls: true,
           useCommitBody: true,
           auth: true

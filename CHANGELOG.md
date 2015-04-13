@@ -1,6 +1,11 @@
 ## Change Log
 
-### v1.6.2 (2015/03/26 20:42 +00:00)
+### 1.6.3 (2015/04/13 18:03 +00:00)
+- [#131](https://github.com/linkedin/dustjs-helpers/pull/131) Explicitly check context.stack.tail.head to make sure it is defined (@sethkinast, @rragan)
+- [#130](https://github.com/linkedin/dustjs-helpers/pull/130) Move to Travis CI Container builds (@sethkinast)
+- [#127](https://github.com/linkedin/dustjs-helpers/pull/127) Add grunt-github-changes plugin to automatically update changelog before releases (@sethkinast)
+
+### v1.6.2 (2015/03/26 20:43 +00:00)
 - [#126](https://github.com/linkedin/dustjs-helpers/pull/126) Deprecate tap helper (@sethkinast)
 - [#119](https://github.com/linkedin/dustjs-helpers/pull/119) Normalize all log messages. (@sethkinast)
 - [#125](https://github.com/linkedin/dustjs-helpers/pull/125) Improvements to checking for the existence of a {@select} state. (@sethkinast)

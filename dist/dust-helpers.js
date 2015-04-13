@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.6.2
+/*! dustjs-helpers - v1.6.3
 * https://github.com/linkedin/dustjs-helpers
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -28,6 +28,7 @@ function _deprecated(target) {
 
 function isSelect(context) {
   return context.stack.tail &&
+         context.stack.tail.head &&
          typeof context.stack.tail.head.__select__ !== "undefined";
 }
 
