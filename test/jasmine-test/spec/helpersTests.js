@@ -517,6 +517,13 @@
         context:  {},
         expected: "",
         message: "eq helper without a body should fail gracefully and return nothing"
+      },
+      {
+        name:     "eq helper with makeBase",
+        source:   '{@eq key=hello value="world"}Hello{/eq}',
+        context:  dust.makeBase({ hello:"world" }).push({ foo: "bar" }),
+        expected: "Hello",
+        message:  "eq helper can draw from globals even when the stack is undefined"
       }
     ]
   },
