@@ -5,8 +5,8 @@
     "name": "Aleksander Williams",
     "url": "http://akdubya.github.com/dustjs"
   },
-  "homepage": "https://github.com/linkedin/dustjs-helpers",
-  "description": "Helpers for dustjs-linkedin package",
+  "homepage": "http://dustjs.com/",
+  "description": "Helpers for dustjs-linkedin",
   "contributors": [
     "Veena Basavaraj <vybs@users.noreply.github.com>",
     "Yevgeniy Brikman <brikis98@users.noreply.github.com>",
@@ -59,6 +59,6 @@
   },
   "license": "MIT",
   "engine": {
-    "node": ">=0.8"
+    "node": ">=0.10"
   }
 }
