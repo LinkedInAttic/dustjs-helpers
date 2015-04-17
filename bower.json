@@ -24,7 +24,7 @@
     "node"
   ],
   "dependencies": {
-    "dustjs-linkedin": "2.6 - 2.7"
+    "dustjs-linkedin": "2.7 - 2.8"
   },
   "keywords": [
     "templates",
