@@ -43,7 +43,6 @@
   });
 
   function prepare(test) {
-    dust.config = test.config || { whitespace: false };
     dust.loadSource(dust.compile(test.source, test.name));
     var context = test.context;
     if (test.base) {
