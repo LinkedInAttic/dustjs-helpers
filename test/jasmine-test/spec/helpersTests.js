@@ -1,3 +1,4 @@
+/*global dust*/
 (function(dust) {
 
   var helpersTests = [
@@ -381,7 +382,7 @@
       },
       {
         name:     "math helper with body gt default",
-        source:   '<div>{@math key="13" method="add" operand="12"}{@gt value=123}13 + 12 > 123{/gt}{@default}Math is fun{/default}{/math}</div>',
+        source:   '<div>{@math key="13" method="add" operand="12"}{@gt value=123}13 + 12 > 123{/gt}{@none}Math is fun{/none}{/math}</div>',
         context:  {},
         expected: "<div>Math is fun</div>",
         message: "testing math with body else helper with add and gt and default"
@@ -394,11 +395,18 @@
         message: "testing math with body ignores the else"
       },
       {
-        name:     "math helper with body acts like the select helper",
+        name:     "math helper with body acts like the select helper, ignoring else",
         source:   '<div>{@math key="1" method="subtract" operand="1"}math with body is truthy even if mathout is falsy{:else}else is meaningless{/math}</div>',
         context:  {},
         expected: "<div>math with body is truthy even if mathout is falsy</div>",
         message: "testing math with body ignores the else"
+      },
+      {
+        name:     "math helper with body acts like the select helper and uses @any and @none",
+        source:   '{@math key=1 method="subtract" operand=2}{@any}Positive!{/any}{@none}Negative!{/none}{@gte value=0/}{/math}',
+        context:  {},
+        expected: 'Negative!',
+        message:  'math helper with any and none'
       },
       {
         name:     "math helper empty body",
@@ -896,7 +904,7 @@
                      "{@eq value=\"bar\"}foobar{/eq}",
                      "{@eq value=\"baz\"}foobaz{/eq}",
                      "{@eq value=\"foobar\"}foofoobar{/eq}",
-                     "{@default value=\"foo\"}foofoo{/default}",
+                     "{@none value=\"foo\"}foofoo{/none}",
                    "{/select}"
                   ].join("\n"),
         context:  { "foo": "foo" },
@@ -943,7 +951,7 @@
         source:   ["{#b}{@select}",
                    " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
                    " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
-                   " {@default}foofoo{/default}",
+                   " {@none}foofoo{/none}",
                    "{/select}{/b}"].join("\n"),
         context:  { b : { z: "foo", x: "bar" } },
         expected: "",
@@ -955,7 +963,7 @@
         source:   ["{#b}{@select key=y}",
                    " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
                    " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
-                   " {@default}foofoo{/default}",
+                   " {@none}foofoo{/none}",
                    "{/select}{/b}"].join("\n"),
         context:  { b : { z: "foo", x: "bar" } },
         expected: "foofoo",
@@ -966,7 +974,7 @@
         source:   ["{#b}{@select key=\"{x}\"}",
                    " {@eq value=\"{y}\"}<div>BAR</div>{/eq}",
                    " {@eq value=\"{z}\"}<div>BAZ</div>{/eq}",
-                   " {@default value=\"foo\"}foofoo{/default}",
+                   " {@none value=\"foo\"}foofoo{/none}",
                    "{/select}{/b}"].join("\n"),
         context:  { b : { "x": "foo", "y": "bar", "z": "baz" } },
         expected: "foofoo",
@@ -977,7 +985,7 @@
         source:   ["{#skills}{@select key=.}",
                    "{@eq value=\"java\"}JAVA,{/eq}",
                    "{@eq value=\"js\"}JS,{/eq}",
-                   "{@default value=\"foo\"}UNKNOWN{/default}",
+                   "{@none value=\"foo\"}UNKNOWN{/none}",
                    "{/select}{/skills}"].join("\n"),
         context:  { "skills" : [ "java", "js" , "unknown"] },
         expected: "JAVA,JS,UNKNOWN",
@@ -988,7 +996,7 @@
         source:   ["{#skills}{@select key=\"{.}\"}",
                    "{@eq value=\"java\"}JAVA,{/eq}",
                    "{@eq value=\"js\"}JS,{/eq}",
-                   "{@default value=\"foo\"}UNKNOWN{/default}",
+                   "{@none value=\"foo\"}UNKNOWN{/none}",
                    "{/select}{/skills}"].join("\n"),
         context:  { "skills" : [ "java", "js" , "unknown"] },
         expected: "JAVA,JS,UNKNOWN",
@@ -1014,7 +1022,7 @@
         source:   ['{#skills}{@select key="{.}"}',
                      '{@eq value="java"}JAVA {outside},{/eq}',
                      '{@eq value="js"}JS {outside},{/eq}',
-                     '{@default value="foo"}UNKNOWN {outside}{/default}',
+                     '{@none value="foo"}UNKNOWN {outside}{/none}',
                    '{/select}{/skills}'].join("\n"),
         context:  { "skills" : [ "java", "js" , "unknown"], "outside": 'foo' },
         expected: "JAVA foo,JS foo,UNKNOWN foo",
@@ -1028,10 +1036,10 @@
                         '    done {message} ',
                         '    {outside}',
                         '{/eq} ',
-                        '{@default}',
+                        '{@none}',
                         '    default {message} ',
                         '    {outside}',
-                        '{/default}',
+                        '{/none}',
                     '{/select}',
                     '{/data.messages}'].join("\n"),
         context: {
@@ -1201,105 +1209,105 @@
          source:   'you have {@size key=list}{body}{/size} new messages',
          context:  { list: [ 'msg1', 'msg2', 'msg3' ], "body" : "body block" },
          expected: "you have 3 new messages",
-         message: "should test size helper not supporting body"
+         message: "should test {@size} skips its body"
        },
       {
         name:     "size helper 3 items",
         source:   'you have {@size key=list/} new messages',
         context:  { list: [ 'msg1', 'msg2', 'msg3' ] },
         expected: "you have 3 new messages",
-        message: "should test if size helper is working properly with array"
+        message: "should test {@size} with an array"
       },
       {
         name:     "size helper string",
         source:   "'{mystring}' has {@size key=mystring/} letters",
         context:  { mystring: 'hello' },
         expected: "'hello' has 5 letters",
-        message: "should test if size helper is working properly with strings"
+        message: "should test {@size} with a string"
       },
       {
         name:     "size helper string (empty)",
         source:   "'{mystring}' has {@size key=mystring/} letters",
         context:  { mystring: '' },
         expected: "'' has 0 letters",
-        message: "should test if size helper is working properly with strings"
+        message: "should test {@size} with an empty string"
       },
       {
-        name:     "size helper for newline",
-        source:   "{@size key=mystring/} letters",
-        context:  { mystring: '\n' },
-        expected: "1 letters",
-        message: "should test if size is working for newline"
-      },
-      {
-        name:     "size helper string with newline",
-        source:   "{@size key=mystring/} letters",
-        context:  { mystring: 'test\n' },
-        expected: "5 letters",
-        message: "should test if size for string with newline"
-      },
-      {
-        name:     "size helper string with newline, tab, carriage return and bakspace",
+        name:     "size helper string with newline, tab, carriage return and backspace",
         source:   "{@size key=mystring/} letters",
         context:  { mystring: 'test\n\t\r\b' },
         expected: "8 letters",
-        message: "should test if size helper is working for string with newline, tab, carriage return and bakspace"
+        message: "should test {@size} with character literals in a string"
       },
       {
         name:     "size helper number",
         source:   'you have {@size key=mynumber/} new messages',
         context:  { mynumber: 0 },
         expected: "you have 0 new messages",
-        message: "should test if size helper is working properly with numeric 0"
+        message: "should test {@size} with 0"
       },
       {
         name:     "size helper number",
         source:   'you have {@size key=mynumber/} new messages',
         context:  { mynumber: 10 },
         expected: "you have 10 new messages",
-        message: "should test if size helper is working properly with numeric 10"
+        message: "should test {@size} with an int"
       },
       {
         name:     "size helper floating numeric",
         source:   'you have {@size key=mynumber/} new messages',
         context:  { mynumber: 0.4 },
         expected: "you have 0.4 new messages",
-        message: "should test if size helper is working properly with floating numeric"
+        message: "should test {@size} with a float"
       },
       {
          name:     "size helper with boolean false",
          source:   'you have {@size key=myboolean/} new messages',
          context:  { myboolean: false },
          expected: "you have 0 new messages",
-         message: "should test if size helper is working properly with boolean false"
+         message: "should test {@size} with false"
       },
       {
           name:     "size helper with boolean true",
           source:   'you have {@size key=myboolean/} new messages',
           context:  { myboolean: true },
           expected: "you have 0 new messages",
-          message: "should test if size helper is working properly with boolean true"
+          message: "should test {@size} with true"
       },
       {
         name:     "size helper with object",
         source:   'you have {@size key=myValue/} new messages',
         context:  { myValue: { foo:'bar', baz:'bax' } },
         expected: "you have 2 new messages",
-        message: "should test if size helper is working properly when the value is an object "
+        message: "should test {@size} with an Object"
       },
       {
         name:     "size helper with object",
         source:   'you have {@size key=myValue/} new messages',
         context:  { myValue: {} },
         expected: "you have 0 new messages",
-        message: "should test if size helper is working properly when the value is an object that is zero"
+        message: "should test {@size} with an empty Object"
       },
       {
         name:     "size helper value not set",
         source:   'you have {@size key=myNumber/} new messages',
         context:  {},
         expected: "you have 0 new messages",
-        message: "should test if size helper is working properly when the value is not present in context"
+        message: "should test {@size} with an undefined value"
+      },
+      {
+        name:     "size helper function",
+        source:   'you have {@size key=func/} new messages',
+        context:  { func: function() { return 4; } },
+        expected: "you have 4 new messages",
+        message: "should test {@size} with a function"
+      },
+      {
+        name:     "size body function",
+        source:   '"hello" has {@size key="{func}"/} letters',
+        context:  { func: function() { return 'hello'; } },
+        expected: '"hello" has 5 letters',
+        message: "should test {@size} with a Dust body"
       }
     ]
   },
@@ -1562,6 +1570,6 @@
   if (typeof exports !== "undefined") {
     module.exports = helpersTests; // We're on node.js
   } else {
-    this['helpersTests'] = helpersTests; // We're on the browser
+    this.helpersTests = helpersTests; // We're on the browser
   }
 })(typeof exports !== 'undefined' ? require('dustjs-linkedin') : dust);
