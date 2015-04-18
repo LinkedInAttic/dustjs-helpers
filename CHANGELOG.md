@@ -1,6 +1,11 @@
 ## Change Log
 
-### 1.6.3 (2015/04/13 18:03 +00:00)
+### v1.7.0 (2015/04/18 00:24 +00:00)
+- [#133](https://github.com/linkedin/dustjs-helpers/pull/133) Don't require a key for `{@select}` (@sethkinast)
+- [#129](https://github.com/linkedin/dustjs-helpers/pull/129) Refactor for 1.7 (@sethkinast)
+- [#132](https://github.com/linkedin/dustjs-helpers/pull/132) Drop 0.8 support and bump dust core dependency (@sethkinast)
+
+### v1.6.3 (2015/04/13 18:03 +00:00)
 - [#131](https://github.com/linkedin/dustjs-helpers/pull/131) Explicitly check context.stack.tail.head to make sure it is defined (@sethkinast, @rragan)
 - [#130](https://github.com/linkedin/dustjs-helpers/pull/130) Move to Travis CI Container builds (@sethkinast)
 - [#127](https://github.com/linkedin/dustjs-helpers/pull/127) Add grunt-github-changes plugin to automatically update changelog before releases (@sethkinast)
