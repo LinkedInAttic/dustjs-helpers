@@ -517,7 +517,7 @@
          source:   "{@eq key=x value=\"0\" type=\"string\"}equal{/eq}",
          context:  {x:0},
          expected: "equal",
-         message: "eq helper should coerce falsy booleans"
+         message: "eq helper should coerce falsy values to string"
       },
       {
         name:     "eq helper without a body",
@@ -540,17 +540,17 @@
     tests: [
       {
          name:     "not eq helper true/notequal  boolean case",
-         source:   "{@ne key=\"true\" value=\"false\" type=\"boolean\"}not equal{/ne}",
+         source:   "{@ne key=\"true\" value=\"false\" type=\"BOOLEAN\"}not equal{/ne}",
          context:  {},
          expected: "not equal",
-         message: "not eq helper true/notequal  boolean case"
+         message: "not eq helper true/notequal boolean case"
       },
       {
          name:     "not eq helper alse/equal boolean case",
-         source:   "{@ne key=\"false\" value=\"false\" type=\"boolean\"}equal{/ne}",
+         source:   "{@ne key=\"false\" value=\"false\" type=\"Boolean\"}equal{/ne}",
          context:  {},
          expected: "",
-         message: "not eq helper alse/equal boolean case"
+         message: "not eq helper false/equal boolean case"
       }
     ]
   },
@@ -924,11 +924,11 @@
       },
       {
         name:     "select helper with variable and type string with 2 conditions",
-        source:   ['{@select key=test}',
+        source:   ['{@select key=test type="string"}',
                     '{@eq value="{y}"}<div>FOO</div>{/eq}',
                     '{@eq value="{x}"}<div>BAR</div>{/eq}',
                   '{/select}'].join("\n"),
-        context:  { "test":"foo", "y": "foo", "x": "bar" },
+        context:  { "test":42, "y": 42, "x": "bar" },
         expected: "<div>FOO</div>",
         message: "should test select helper with variable and type string with 2 conditions"
       },
@@ -947,16 +947,15 @@
         message: "should test select helper with variable and type string in a nested objects"
       },
       {
-        name:     "select helper with missing key parameter and hence no output",
+        name:     "select helper with no key parameter",
         source:   ["{#b}{@select}",
-                   " {@eq value=\"{z}\"}<div>FOO</div>{/eq}",
-                   " {@eq value=\"{x}\"}<div>BAR</div>{/eq}",
+                   " {@eq key=x value=\"{z}\"}FOO{/eq}",
+                   " {@eq key=x value=\"{x}\"}BAR{/eq}",
                    " {@none}foofoo{/none}",
                    "{/select}{/b}"].join("\n"),
         context:  { b : { z: "foo", x: "bar" } },
-        expected: "",
-        log: "{@select}: `key` is required",
-        message: "should test select helper with missing key in the context and hence no output"
+        expected: "BAR",
+        message: "should test select helper with no key"
       },
       {
         name:     "select helper with key not defined in the context",
@@ -970,15 +969,25 @@
         message: "should test select helper with undefined key in the context"
       },
       {
-        name:     "select helper wih key matching the default condition",
+        name:     "select helper with key that matches no tests",
         source:   ["{#b}{@select key=\"{x}\"}",
                    " {@eq value=\"{y}\"}<div>BAR</div>{/eq}",
                    " {@eq value=\"{z}\"}<div>BAZ</div>{/eq}",
-                   " {@none value=\"foo\"}foofoo{/none}",
+                   " {@none}foofoo{/none}",
                    "{/select}{/b}"].join("\n"),
         context:  { b : { "x": "foo", "y": "bar", "z": "baz" } },
         expected: "foofoo",
-        message: "should test select helper with key matching the default condition"
+        message: "should test select helper with key that matches no tests"
+      },
+      {
+        name:     "select helper with undefined key coerced to boolean",
+        source:   ['{@select key=not_there}',
+                   '{@eq value="true" type="boolean"}all the messages{/eq}',
+                   '{@eq value="false" type="boolean"}no messages{/eq}',
+                   '{/select}'].join(''),
+        context: {},
+        expected: 'no messages',
+        message:  'should test select helper with undefined key coerced to boolean'
       },
       {
         name:     "select helper inside a array with .",
