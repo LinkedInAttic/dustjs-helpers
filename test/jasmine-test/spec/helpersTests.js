@@ -1061,6 +1061,28 @@
         },
         expected: "done done outside  default default outside",
         message: "should test select helper with params in an outer section"
+      },
+      {
+        name: "select with nested @eq",
+        source: ['{@select key=selectKey}',
+                   '{@eq value=1}One',
+                     '{@eq key=test value=5}Correct!{/eq}',
+                     '{@select}',
+                       '{@eq value=1}Bug! No key specified{:else}Bug! No key specified{/eq}',
+                       '{@eq key=test value=5}InnerCorrect!{/eq}',
+                       '{@eq key=test value=5}Bug! True, but inner select is resolved.{/eq}',
+                     '{/select}',
+                   '{/eq}',
+                   '{@eq value=1}Bug! True, but select is resolved.{:else}Bug! Not false{/eq}',
+                   '{@eq key=key value=2}Bug! True, but select is resolved.{:else}Bug! Not false{/eq}',
+                 '{/select}'].join(''),
+        context: {
+          selectKey: 1,
+          test: 5,
+          key: 2
+        },
+        expected: "OneCorrect!InnerCorrect!",
+        message: "Truth tests should only be skipped at the top level of a select"
       }
     ]
   },
