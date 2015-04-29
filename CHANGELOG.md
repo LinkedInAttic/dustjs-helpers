@@ -1,6 +1,10 @@
 ## Change Log
 
-### v1.7.0 (2015/04/18 00:24 +00:00)
+### v1.7.1 (2015/04/29 02:39 +00:00)
+- [#136](https://github.com/linkedin/dustjs-helpers/pull/136) Sync linkedin/dustjs#650 (@sethkinast)
+- [#135](https://github.com/linkedin/dustjs-helpers/pull/135) Evaluate truth test bodies inside a @select before resolving the select. (@sethkinast)
+
+### v1.7.0 (2015/04/18 00:26 +00:00)
 - [#133](https://github.com/linkedin/dustjs-helpers/pull/133) Don't require a key for `{@select}` (@sethkinast)
 - [#129](https://github.com/linkedin/dustjs-helpers/pull/129) Refactor for 1.7 (@sethkinast)
 - [#132](https://github.com/linkedin/dustjs-helpers/pull/132) Drop 0.8 support and bump dust core dependency (@sethkinast)

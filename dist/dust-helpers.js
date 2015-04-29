@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.7.0
+/*! dustjs-helpers - v1.7.1
 * http://dustjs.com/
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -51,6 +51,7 @@ function addSelectState(context, opts) {
   }
 
   var state = {
+    isPending: false,
     isResolved: false,
     isDeferredComplete: false,
     deferreds: []
@@ -108,7 +109,7 @@ function filter(chunk, context, bodies, params, helperName, test) {
   var body = bodies.block,
       skip = bodies.else,
       selectState = getSelectState(context) || {},
-      key, value, type;
+      willResolve, key, value, type;
 
   // Once one truth test in a select passes, short-circuit the rest of the tests
   if (selectState.isResolved) {
@@ -131,14 +132,20 @@ function filter(chunk, context, bodies, params, helperName, test) {
   value = coerce(context.resolve(params.value), type);
 
   if (test(key, value)) {
-    if (selectState) {
+    // Once a truth test passes, put the select into "pending" state. Now we can render the body of
+    // the truth test (which may contain truth tests) without altering the state of the select.
+    if (!selectState.isPending) {
+      willResolve = true;
+      selectState.isPending = true;
+    }
+    if (body) {
+      chunk = chunk.render(body, context);
+    }
+    if (willResolve) {
       selectState.isResolved = true;
     }
-    if(body) {
-      return chunk.render(body, context);
-    }
   } else if (skip) {
-    return chunk.render(skip, context);
+    chunk = chunk.render(skip, context);
   }
   return chunk;
 }
