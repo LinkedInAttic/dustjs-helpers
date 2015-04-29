@@ -233,10 +233,13 @@ module.exports = function (grunt) {
   grunt.registerTask('build',        ['clean:build', 'jshint:testSpecs', 'buildLib', 'uglify:build']);
 
   //test tasks
-  grunt.registerTask('testNode',     ['build', 'shell:testNode']);
+  grunt.registerTask('testNode',     ['shell:testNode']);
   grunt.registerTask('testRhino',    ['build', 'shell:testRhino']);
   grunt.registerTask('testPhantom',  ['build', 'jasmine:testProd']);
-  grunt.registerTask('test',         ['build', 'jasmine:testProd', 'shell:testNode', 'shell:testRhino', 'jasmine:coverage']);
+  grunt.registerTask('test',         ['build', 'jasmine:testProd', 'testNode', 'shell:testRhino', 'jasmine:coverage']);
+
+  //decide whether to run all tests or just the Node tests for Travis CI
+  grunt.registerTask('travis',       (process.env.TEST === 'all') ? ['test'] : ['testNode']);
 
   //task for debugging in browser
   grunt.registerTask('dev',          ['build', 'jasmine:testDev:build', 'connect:testServer','log:testClient', 'watch:lib']);
