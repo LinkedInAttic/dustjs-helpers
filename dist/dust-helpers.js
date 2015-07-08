@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.7.1
+/*! dustjs-helpers - v1.7.2
 * http://dustjs.com/
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -107,7 +107,7 @@ function truthTest(name, test) {
  */
 function filter(chunk, context, bodies, params, helperName, test) {
   var body = bodies.block,
-      skip = bodies.else,
+      skip = bodies['else'],
       selectState = getSelectState(context) || {},
       willResolve, key, value, type;
 
