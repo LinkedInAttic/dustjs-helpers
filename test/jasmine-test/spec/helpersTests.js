@@ -1182,6 +1182,13 @@
         context: { one: "false", two: "true" },
         expected: "Hello",
         message: "any helpers inside multikey selects render"
+      },
+      {
+        name: "any with truth tests inside it",
+        source: '{@select key=foo}{@eq value="foo"/}{@any}{@eq key=a value="a"}A!{/eq} {@eq key=b value="b"}B!{/eq} {@eq key=c value="d"}ERROR!{/eq}{/any}{/select}',
+        context: { foo: "foo", a: "a", b: "b", c: "c" },
+        expected: "A! B! ",
+        message: "truth tests inside a any helper work"
       }
     ]
   },
@@ -1230,6 +1237,13 @@
         context: { foo: true, moo: true},
         expected: "Hello World",
         message: "a none helper must have its own select to render"
+      },
+      {
+        name: "none with truth tests inside it",
+        source: '{@select key=foo}{@none}{@eq key=a value="a"}A!{/eq} {@eq key=b value="b"}B!{/eq} {@eq key=c value="d"}ERROR!{/eq}{/none}{/select}',
+        context: { a: "a", b: "b", c: "c" },
+        expected: "A! B! ",
+        message: "truth tests inside a none helper work"
       }
     ]
   },
