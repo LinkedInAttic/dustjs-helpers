@@ -1,4 +1,4 @@
-/*! dustjs-helpers - v1.7.2
+/*! dustjs-helpers - v1.7.3
 * http://dustjs.com/
 * Copyright (c) 2015 Aleksander Williams; Released under the MIT License */
 (function(root, factory) {
@@ -71,12 +71,14 @@ function addSelectState(context, opts) {
  */
 function resolveSelectDeferreds(state) {
   var x, len;
+  state.isDeferredPending = true;
   if(state.deferreds.length) {
     state.isDeferredComplete = true;
     for(x=0, len=state.deferreds.length; x<len; x++) {
       state.deferreds[x]();
     }
   }
+  state.isDeferredPending = false;
 }
 
 /**
@@ -112,7 +114,7 @@ function filter(chunk, context, bodies, params, helperName, test) {
       willResolve, key, value, type;
 
   // Once one truth test in a select passes, short-circuit the rest of the tests
-  if (selectState.isResolved) {
+  if (selectState.isResolved && !selectState.isDeferredPending) {
     return chunk;
   }
 

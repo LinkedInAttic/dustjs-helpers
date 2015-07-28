@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.7.3 (2015/07/28 20:55 +00:00)
+- [#140](https://github.com/linkedin/dustjs-helpers/pull/140) Fix logic helpers inside any and none blocks. (@sethkinast)
+
 ### v1.7.1 (2015/04/29 02:39 +00:00)
 - [#136](https://github.com/linkedin/dustjs-helpers/pull/136) Sync linkedin/dustjs#650 (@sethkinast)
 - [#135](https://github.com/linkedin/dustjs-helpers/pull/135) Evaluate truth test bodies inside a @select before resolving the select. (@sethkinast)
