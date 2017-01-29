@@ -1596,11 +1596,25 @@
         message:  "first helper should output on the first iteration only"
       },
       {
+        name:     "first helper with else",
+        source:   "{#guests}{@first}Hello {:else}and {/first}{.} {/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Hello Alice and Bob and Charlie ",
+        message:  "first helper should support else"
+      },      
+      {
         name:     "last helper",
         source:   "Hello {#guests}{@last}and {/last}{.} {/guests}",
         context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
         expected: "Hello Alice Bob and Charlie ",
         message:  "last helper should output on the last iteration only"
+      },
+      {
+        name:     "last helper with else",
+        source:   "{#guests}{.}{@last}.{:else} and {/last}{/guests}",
+        context:  { guests: function() { return ["Alice", "Bob", "Charlie"]; } },
+        expected: "Alice and Bob and Charlie.",
+        message:  "last helper should support else"
       },
       {
         name:     "first / last / sep combo",
