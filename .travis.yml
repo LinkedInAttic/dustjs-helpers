@@ -1,7 +1,9 @@
 language: node_js
 node_js:
   - "0.12"
-  - "iojs"
+  - "4"
+  - "6"
+  - "8"
 matrix:
   include:
     - node_js: "0.10"
