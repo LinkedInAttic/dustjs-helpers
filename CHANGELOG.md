@@ -1,5 +1,8 @@
 ## Change Log
 
+### v1.7.4 (2017/12/09 05:05 +00:00)
+- [#142](https://github.com/linkedin/dustjs-helpers/pull/142) Fix Node 8 - add registerWith property to dustjs-helpers which has factory function (@kumarrishav)
+
 ### v1.7.3 (2015/07/28 20:55 +00:00)
 - [#140](https://github.com/linkedin/dustjs-helpers/pull/140) Fix logic helpers inside any and none blocks. (@sethkinast)
 
