@@ -1,4 +1,4 @@
-# Dust Helpers  [![Build Status](https://secure.travis-ci.org/linkedin/dustjs-helpers.png)](http://travis-ci.org/linkedin/dustjs-helpers)
+# Dust Helpers  [![Build Status](https://secure.travis-ci.org/linkedin/dustjs-helpers.png)](http://travis-ci.org/linkedin/dustjs-helpers) [![Greenkeeper badge](https://badges.greenkeeper.io/linkedin/dustjs-helpers.svg)](https://greenkeeper.io/)
 
 This repository holds context helpers for Dust.
 
