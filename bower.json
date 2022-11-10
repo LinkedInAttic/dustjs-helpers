@@ -1,6 +1,6 @@
 {
   "name": "dustjs-helpers",
-  "version": "1.7.4",
+  "version": "1.8.0",
   "homepage": "https://github.com/linkedin/dustjs-helpers",
   "authors": [
     "Veena Basavaraj <vybs@users.noreply.github.com>",
@@ -24,7 +24,7 @@
     "node"
   ],
   "dependencies": {
-    "dustjs-linkedin": "2.7 - 2.8"
+    "dustjs-linkedin": "2.7 - 3.0"
   },
   "keywords": [
     "templates",
